@@ -2,3 +2,9 @@
 
 # Aroma/framework/data.py: 1
 kaggle == 1.5.10
+
+# Aroma/framework/data.py: 6
+numpy == 1.19.4
+
+# Aroma/framework/data.py: 5
+pandas == 1.2.0
