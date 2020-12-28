@@ -11,7 +11,8 @@
 - git diff (without any arguemnts) ==> highlights the difference between files in staging area & working directory
 - git diff --staged ==> highlights the difference between files in staging area & repo.
 - git branch *branch name* ==> creates a new branch 
-- git branch -d *branch name* ==> deletes the branch label 
+- git branch -d *branch name* ==> deletes the branch label
+- git branch --show-current ==> shows the current branch
 - git checkout branch name* ==> switches to a branch with the same code as master
 - git checkout -b *new branch name* === git branch then git checkout
 - git show *commit id* ==> highlights the diff between this commit & its parent
