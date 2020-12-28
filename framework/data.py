@@ -2,6 +2,9 @@ import kaggle
 import zipfile
 import os
 import shutil
+import pandas as pd
+import numpy as np
+
 """ This Module is responsiple for 
 1- Downloading ** a Kaggle dataset** and loading it into the model,
 2- split trainig dataset into a train and validat pandas dataframes
@@ -36,6 +39,22 @@ class DataLoader:
         """Removes the downloaded data"""
         shutil.rmtree('dataset')
 
+    #load data into model
+    def split_data(self , ratio = 0.8 ):
+        """split trainig data which is in Aroma/framework/dataset/train.csv
+            into train and validation dataframes by a ratio (default 0.8)
+            and return train and validation dataframes respectively
+        """
+        df = pd.read_csv('./dataset/train.csv')
+        df['split'] = np.random.randn(df.shape[0], 1)
 
-data_ldr = DataLoader()
-data_ldr.delete_dataset()
+        msk = np.random.rand(len(df)) <= ratio
+
+        train = df[msk]
+        validation = df[~msk]
+        return train,validation
+
+dataldr =DataLoader()
+train,validation= dataldr.split_data(0.2)
+print(train.head())
+print()
