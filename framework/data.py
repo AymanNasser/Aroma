@@ -40,9 +40,9 @@ class DataLoader:
         shutil.rmtree('dataset')
 
     #load data into model
-    def split_data(self , ratio = 0.8 ):
+    def split_data(self , ratio = 0.2 ):
         """split trainig data which is in Aroma/framework/dataset/train.csv
-            into train and validation dataframes by a ratio (default 0.8)
+            into train and validation dataframes by a ratio (default 0.2)
             and return train and validation dataframes respectively
         """
         df = pd.read_csv('./dataset/train.csv')
@@ -50,11 +50,7 @@ class DataLoader:
 
         msk = np.random.rand(len(df)) <= ratio
 
-        train = df[msk]
-        validation = df[~msk]
+        train = df[~msk]
+        validation = df[msk]
         return train,validation
 
-dataldr =DataLoader()
-train,validation= dataldr.split_data(0.2)
-print(train.head())
-print()
