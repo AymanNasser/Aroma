@@ -51,13 +51,27 @@ class DataLoader:
     
     
     #load data into model
+<<<<<<< HEAD
     def split_data(self, ratio =0.2):
         
+||||||| c661061
+    def split_data(self , ratio = 0.8 ):
+=======
+    def split_data(self , ratio = 0.2 ):
+>>>>>>> 39ed60b2fe19615f125bca7a77ce674de38c2c65
         """split trainig data which is in Aroma/framework/dataset/train.csv
+<<<<<<< HEAD
             into train and validation dataframes by a ratio (default 0.2)
             and load test data which is in Aroma/framework/dataset/test.csv
             and intialize five member vaiables
             
+||||||| c661061
+            into train and validation dataframes by a ratio (default 0.8)
+            and return train and validation dataframes respectively
+=======
+            into train and validation dataframes by a ratio (default 0.2)
+            and return train and validation dataframes respectively
+>>>>>>> 39ed60b2fe19615f125bca7a77ce674de38c2c65
         """
         df = pd.read_csv('./dataset/train.csv') 
         df_test = pd.read_csv('./dataset/test.csv')
@@ -65,6 +79,7 @@ class DataLoader:
 
         msk = np.random.rand(len(df)) <= ratio
 
+<<<<<<< HEAD
         df_train = df[~msk]
         df_validation = df[msk]
 
@@ -98,4 +113,13 @@ class DataLoader:
     def get_test_data(self,index):
         """returns the row with the specific index"""
         return self.test[index]
+||||||| c661061
+        train = df[msk]
+        validation = df[~msk]
+        return train,validation
+=======
+        train = df[~msk]
+        validation = df[msk]
+        return train,validation
+>>>>>>> 39ed60b2fe19615f125bca7a77ce674de38c2c65
 
