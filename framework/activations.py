@@ -2,23 +2,53 @@ import numpy as np
 
 
 class Activation:
+    """Activation is an abstract Class of any activation function """
     def __init__(self):
         # To store the gradient of an operation
         self.grad = {}
-        #self.__call__()
 
     def __call__(self,x):
-        # calculating Y_hat output
+        """
+        This method is called through an object instance it calculates
+        the output of the function and the gradients then caches it
+        """
         output = self.forward(x)
         # calculating and caching gradients
         self.grad = self.calc_grad(x)
         return output
 
     def forward(self, x):
+        """
+        Calculates the activation function output
+        Args:
+            x: numpy.ndarray containing
+            output of a linear layer
+        Returns:
+            output: numpy.ndarray containing
+            the activation function output
+        """
         pass
 
     def calc_grad(self, x):
+        """
+        Calculates the activation function output
+        Args:
+             x: numpy.ndarray containing
+             output of a linear layer
+        Returns:
+             output: numpy.ndarray containing
+             the gradient of activation function operation
+        """
         pass
+
+    def get_grad(self):
+        """
+        Gets the gradient of an activation function
+        Returns:
+            self.grad{}: dictionary containing
+            the gradient
+        """
+        return self.grad
 
 
 class Sigmoid(Activation):
@@ -31,20 +61,14 @@ class Sigmoid(Activation):
         self.grad = {"X": sigmoid_grad}
         return self.grad
 
-    def get_grad(self):
-        return self.grad
-
 
 class ReLU(Activation):
     def forward(self, x):
-        return x*(x > 0)
+        return x * (x > 0)
 
     def calc_grad(self, x):
-        sigmoid_grad = x * (x > 0)
+        sigmoid_grad = 1 * (x > 0)
         self.grad = {"X": sigmoid_grad}
-        return self.grad
-
-    def get_grad(self):
         return self.grad
 
 
@@ -60,9 +84,6 @@ class Softmax(Activation):
         S_matrix = np.tile(S_vector, S.shape[0])
         S_dir = np.diag(S) - (S_matrix * np.transpose(S_matrix))
         return S_dir
-
-    def get_grad(self):
-        return self.grad
 
 
 x = np.array([0.1, 0.5, 0.4])
