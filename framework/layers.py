@@ -6,6 +6,10 @@ class Layer():
     """
     Layer is the abstract model of any NN layer
     """
+
+    # We use *args and **kwargs as an argument when we have no doubt about the number of
+    # arguments we should pass in a function.
+
     def __init__(self, *args, **kwargs):
         self.params = None # It should be equal to object Parameter
         pass

@@ -58,15 +58,15 @@ When writing a body, the blank line between the title and the body is required a
 The footer is optional and is used to reference issue tracker IDs.
 
 ### Continue Commit Messages:
-1-Include only files related to the feature i'm implementing 
-2-Concise subject
-3-Commit body should include all the details of the changes i made
-4-Link commit ==> #issue 
-5-Always make the commit verbal 
+1. Include only files related to the feature i'm implementing 
+2. Concise subject
+3. Commit body should include all the details of the changes i made
+4. Link commit ==> #issue 
+5. Always make the commit verbal 
 
 
 ##### Master branch acts as production quality branch that never breaks 
-##### detached Head state ==> means current commit 
+##### Detached Head state ==> means current commit 
 
 
 
