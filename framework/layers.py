@@ -1,22 +1,26 @@
-
 import numpy as np
-# from params import Parameter
+from .parameters import Parameters
 
-class Layer():
+
+class Layer:
     """
     Layer is the abstract model of any NN layer
     """
 
     # We use *args and **kwargs as an argument when we have no doubt about the number of
     # arguments we should pass in a function.
-
     def __init__(self, *args, **kwargs):
-        self.params = None # It should be equal to object Parameter
+        # Initializing params for saving & retrieving model weights & biases
+        self.params = Parameters()
+        # Initializing cache for intermediate results
+        self.cache = {}
+        # Initializing grad for backward prop.
+        self.grad = {}
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
 
-    def _init_weights(self, *args, **kwargs):
+    def __init_weights(self, *args, **kwargs):
         raise NotImplementedError
 
     def forward(self, *args, **kwargs):
@@ -39,8 +43,16 @@ class Linear(Layer):
         self.layer_num = layer_num
         self.init_type = init_type
 
-    def _init_weights(self, in_dim, out_dim):
-        self.params.init_weights(in_dim, out_dim, self.layer_num, self.init_type)
+    def __init_weights(self, in_dim, out_dim):
+
+        if self.init_type == 'random':
+            self.params.initiate_random(in_dim, out_dim, self.layer_num)
+        elif self.init_type == 'zero':
+            self.params.initiate_zeros(in_dim, out_dim, self.layer_num)
+        elif self.init_type == 'xavier':
+            pass # Call init_xavier
+        else:
+            raise AttributeError("Non Supported Type of Init.")
 
     def forward(self, A_prev):
         """
@@ -53,20 +65,21 @@ class Linear(Layer):
         Returns:
             None
         """
-        W = self.params.get_weights(self.layer_num)
-        b = self.params.get_bias(self.layer_num)
+        W = self.params.get_layer_weights(self.layer_num)
+        b = self.params.get_layer_bias(self.layer_num)
         Z = np.dot(W, A_prev) + b
-        assert Z.shape[0] == A_prev.shape[0]
-        assert Z.shape[1] == W.shape[1] # Returning weights shape
 
-        # Caching A, Z & b
-        # Assuming cache in parameter class is a dictionary
-        self.params.cache['A' + str(self.layer_num)] = A_prev
+        assert Z.shape[0] == (W.shape[0], A_prev.shape[1])
+
+        # Caching W & b
         self.params.cache['W' + str(self.layer_num)] = W
         self.params.cache['b' + str(self.layer_num)] = b
-        self.params.cache['Z' + str(self.layer_num)] = Z
 
-    def backward(self):
+        # Caching A & Z for grads calc.
+        self.cache['A' + str(self.layer_num)] = A_prev
+        self.cache['Z' + str(self.layer_num)] = Z
+
+    def backward(self, Y):
         """
         Backward pass for linear layer
 
@@ -80,11 +93,10 @@ class Linear(Layer):
 
         Return: None
         """
-        A_prev = self.params.cache['A' + str(self.layer_num-1)]
-        A = self.params.cache['A' + str(self.layer_num)]
-        Y = self.params.cache['Y']
-        W = self.params.cache['W' + str(self.layer_num)]
-        b = self.params.cache['b' + str(self.layer_num)]
+        A_prev = self.cache['A' + str(self.layer_num-1)]
+        A = self.cache['A' + str(self.layer_num)]
+        W = self.cache['W' + str(self.layer_num)]
+        b = self.cache['b' + str(self.layer_num)]
 
         m = A_prev.shape[1]
         dZ = (A-Y)
@@ -104,16 +116,25 @@ class Linear(Layer):
         # grads["dA" + str(L)], grads["dW" + str(L)], grads["db" + str(L)] = \
         # linear_backward(sigmoid_backward())
 
+    def calc_grad(self):
+        pass
+
+
 class BatchNorm2D(Layer):
     """
     Batch normalization layer
-
-
     """
-    def __init__(self, layer_num, eps=1e-05):
+    def __init__(self, num_features, layer_num, epsilon=1e-05):
         super(self).__init__()
+        self.channels = num_features
         self.layer_num = layer_num
-        self.eps = eps
+        self.epsilon = epsilon
 
     def forward(self):
+        pass
+
+    def backward(self):
+        pass
+
+    def calc_grad(self):
         pass
