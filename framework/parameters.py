@@ -22,9 +22,33 @@ class Parameters:
 
     """
 
+    __instances = {}
+
+    # static method to be independent of the objects of the class, can know the parameters for different models
+    @staticmethod
+    def model_by_name(model_name):
+        if model_name not in Parameters.__instances.keys():
+            raise AttributeError("There's no parameters for model " + model_name)
+        return Parameters.__instances[model_name]
+
+    @staticmethod
+    def delete_model_by_name(model_name):
+        if model_name not in Parameters.__instances.keys():
+            raise AttributeError("There's no parameters for model " + model_name)
+
+        Parameters.__instances.pop(model_name)
+
+    def get_model_name(self):
+        return self.__model_name
+
     def __init__(self,model_name):
-        self.model_name = model_name
+        if model_name in self.__class__.__instances.keys():
+            raise AttributeError("The model with name " + model_name + " already exist")
+        self.__model_name = model_name
         self.__parameters = {}
+
+        # add the object of the class itself to the dictionary
+        Parameters.__instances[model_name] = self
 
     def __add_weights(self,W,b,in_dim,out_dim,layer_num):
         layer_parameters = {}
@@ -96,9 +120,12 @@ class Parameters:
         return self.__parameters[layer_name]["Dimensions"]
 
 
-w = Parameters("test")
+w = Parameters("PV-RCNN")
+t = Parameters("PointPillars")
 w.initiate_zeros(4,3,1)
 w.initiate_random(3,4,2)
+t.initiate_random(5,6,1)
+print(t.get_model_name(),w.get_model_name())
 
 print(w.get_layer_parameters(2))
 print(w.get_layer_weights(2))
