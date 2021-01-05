@@ -26,13 +26,13 @@ class Parameters:
 
     # static method to be independent of the objects of the class, can know the parameters for different models
     @staticmethod
-    def model_by_name(model_name):
+    def get_model(model_name):
         if model_name not in Parameters.__instances.keys():
             raise AttributeError("There's no parameters for model " + model_name)
         return Parameters.__instances[model_name]
 
     @staticmethod
-    def delete_model_by_name(model_name):
+    def delete_model(model_name):
         if model_name not in Parameters.__instances.keys():
             raise AttributeError("There's no parameters for model " + model_name)
 
@@ -48,7 +48,7 @@ class Parameters:
         self.__parameters = {}
 
         # add the object of the class itself to the dictionary
-        Parameters.__instances[model_name] = self
+        self.__class__.__instances[model_name] = self
 
     def __add_weights(self,W,b,in_dim,out_dim,layer_num):
         layer_parameters = {}
@@ -126,7 +126,8 @@ w.initiate_zeros(4,3,1)
 w.initiate_random(3,4,2)
 t.initiate_random(5,6,1)
 print(t.get_model_name(),w.get_model_name())
-
+aymon = Parameters.get_model("PV-RCNN")
+print(aymon.get_layer_parameters(2))
 print(w.get_layer_parameters(2))
 print(w.get_layer_weights(2))
 print(w.get_layer_bias(2))
