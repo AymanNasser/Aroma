@@ -12,26 +12,24 @@ class Layer():
 
     def __init__(self, *args, **kwargs):
         self.params = None # It should be equal to object Parameter
-        pass
 
     def __call__(self, *args, **kwargs):
-        pass
+        raise NotImplementedError
 
     def _init_weights(self, *args, **kwargs):
-        pass
+        raise NotImplementedError
 
     def forward(self, *args, **kwargs):
-        pass
+        raise NotImplementedError
 
     def backward(self, *args, **kwargs):
-        pass
+        raise NotImplementedError
 
     def calc_grad(self, *args, **kwargs):
-        pass
-
+        raise NotImplementedError
 
     def get_grad(self, *args, **kwargs):
-        pass
+        raise NotImplementedError
 
 
 class Linear(Layer):
@@ -106,3 +104,16 @@ class Linear(Layer):
         # grads["dA" + str(L)], grads["dW" + str(L)], grads["db" + str(L)] = \
         # linear_backward(sigmoid_backward())
 
+class BatchNorm2D(Layer):
+    """
+    Batch normalization layer
+
+
+    """
+    def __init__(self, layer_num, eps=1e-05):
+        super(self).__init__()
+        self.layer_num = layer_num
+        self.eps = eps
+
+    def forward(self):
+        pass
