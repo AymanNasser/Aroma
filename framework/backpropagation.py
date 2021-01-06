@@ -52,14 +52,14 @@ class Backward:
         layer_value = {'a' + str(i) + str(j): A[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
         self.__forward[layer_name]["Layer"] = {"A":layer_value,"Dimensions":(out_dim,in_dim)}
 
-    def add_activation_values(self,layer_num,Z):
-        layer_name = "Layer " + str(layer_num)
-        if layer_name not in self.__parameters.keys():
-            raise RuntimeError(layer_name + " isn't exist")
-
-        out_dim,in_dim = Z.shape
-        activation_value = {'z' + str(i) + str(j): Z[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
-        self.__forward[layer_name]["Activation"] = {"Z":activation_value,"Dimensions":(out_dim,in_dim)}
+    # def add_activation_values(self,layer_num,G):
+    #     layer_name = "Layer " + str(layer_num)
+    #     if layer_name not in self.__parameters.keys():
+    #         raise RuntimeError(layer_name + " isn't exist")
+    #
+    #     out_dim,in_dim = G.shape
+    #     activation_value = {'g' + str(i) + str(j): G[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+    #     self.__forward[layer_name]["Activation"] = {"G":activation_value,"Dimensions":(out_dim,in_dim)}
 
     def add_layer_grads(self,layer_num,dA):
         layer_name = "Layer " + str(layer_num)
@@ -67,17 +67,35 @@ class Backward:
             raise RuntimeError(layer_name + " isn't exist")
 
         out_dim,in_dim = dA.shape
-        activation_value = {'da' + str(i) + str(j): dA[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
-        self.__gradients[layer_name]["Layer"] = {"dA":activation_value,"Dimensions":(out_dim,in_dim)}
+        layer_value = {'da' + str(i) + str(j): dA[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+        self.__gradients[layer_name]["Layer"] = {"dA":layer_value,"Dimensions":(out_dim,in_dim)}
 
-    def add_activation_grads(self,layer_num,dZ):
+    def add_activation_grads(self,layer_num,dG):
         layer_name = "Layer " + str(layer_num)
         if layer_name not in self.__parameters.keys():
             raise RuntimeError(layer_name + " isn't exist")
 
-        out_dim,in_dim = dZ.shape
-        layer_value = {'dz' + str(i) + str(j): dZ[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
-        self.__gradients[layer_name]["Activation"] = {"dZ":layer_value,"Dimensions":(out_dim,in_dim)}
+        out_dim,in_dim = dG.shape
+        activation_value = {'dg' + str(i) + str(j): dG[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+        self.__gradients[layer_name]["Activation"] = {"dG":activation_value,"Dimensions":(out_dim,in_dim)}
+
+    def add_weights_grads(self,layer_num,dW):
+        layer_name = "Layer " + str(layer_num)
+        if layer_name not in self.__parameters.keys():
+            raise RuntimeError(layer_name + " isn't exist")
+
+        out_dim,in_dim = dW.shape
+        weights_value = {'dw' + str(i) + str(j): dW[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+        self.__gradients[layer_name]["Parameters"] = {"dW":weights_value,"Dimensions":(out_dim,in_dim)}
+
+    def add_bias_grads(self,layer_num,db):
+        layer_name = "Layer " + str(layer_num)
+        if layer_name not in self.__parameters.keys():
+            raise RuntimeError(layer_name + " isn't exist")
+
+        out_dim,in_dim = db.shape
+        bias_value = {'db' + str(i) + str(j): db[i,j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+        self.__gradients[layer_name]["Parameters"] = {"db":bias_value,"Dimensions":(out_dim,in_dim)}
 
     def get_layer_values(self,layer_num):
         layer_name = "Layer " + str(layer_num)
@@ -90,16 +108,16 @@ class Backward:
 
         return A
 
-    def get_activation_values(self,layer_num):
-        layer_name = "Layer " + str(layer_num)
-        if layer_name not in self.__parameters.keys():
-            raise RuntimeError(layer_name + " isn't exist")
-
-        layer_value = self.__forward[layer_name]["Layer"]["Z"]
-        out_dim,in_dim = self.__forward[layer_name]["Layer"]["Dimensions"]
-        Z = np.array([[layer_value['z' + str(row) + str(col)] for col in np.arange(start=1, stop=in_dim + 1)] for row in np.arange(start=1, stop=out_dim + 1)])
-
-        return Z
+    # def get_activation_values(self,layer_num):
+    #     layer_name = "Layer " + str(layer_num)
+    #     if layer_name not in self.__parameters.keys():
+    #         raise RuntimeError(layer_name + " isn't exist")
+    #
+    #     layer_value = self.__forward[layer_name]["Layer"]["G"]
+    #     out_dim,in_dim = self.__forward[layer_name]["Layer"]["Dimensions"]
+    #     G = np.array([[layer_value['z' + str(row) + str(col)] for col in np.arange(start=1, stop=in_dim + 1)] for row in np.arange(start=1, stop=out_dim + 1)])
+    #
+    #     return G
 
     def get_layer_grads(self, layer_num):
         layer_name = "Layer " + str(layer_num)
@@ -117,20 +135,52 @@ class Backward:
         if layer_name not in self.__parameters.keys():
             raise RuntimeError(layer_name + " isn't exist")
 
-        layer_value = self.__gradients[layer_name]["Layer"]["dZ"]
+        layer_value = self.__gradients[layer_name]["Layer"]["dG"]
         out_dim, in_dim = self.__gradients[layer_name]["Layer"]["Dimensions"]
-        dZ = np.array([[layer_value['dz' + str(row) + str(col)] for col in np.arange(start=1, stop=in_dim + 1)] for row in np.arange(start=1, stop=out_dim + 1)])
+        dG = np.array([[layer_value['dz' + str(row) + str(col)] for col in np.arange(start=1, stop=in_dim + 1)] for row in np.arange(start=1, stop=out_dim + 1)])
 
-        return dZ
+        return dG
+
+    def get_weights_grads(self, layer_num):
+        layer_name = "Layer " + str(layer_num)
+        if layer_name not in self.__parameters.keys():
+            raise RuntimeError(layer_name + " isn't exist")
+
+        weights_value = self.__gradients[layer_name]["Parameters"]["dW"]
+        out_dim, in_dim = self.__gradients[layer_name]["Parameters"]["Dimensions"]
+        dW = np.array([[weights_value['dw' + str(row) + str(col)] for col in np.arange(start=1, stop=in_dim + 1)] for row in np.arange(start=1, stop=out_dim + 1)])
+
+        return dW
+
+    def get_bias_grads(self, layer_num):
+        layer_name = "Layer " + str(layer_num)
+        if layer_name not in self.__parameters.keys():
+            raise RuntimeError(layer_name + " isn't exist")
+
+        bias_value = self.__gradients[layer_name]["Parameters"]["db"]
+        out_dim, in_dim = self.__gradients[layer_name]["Parameters"]["Dimensions"]
+        db = np.array([[bias_value['db' + str(row) + str(col)] for col in np.arange(start=1, stop=in_dim + 1)] for row in np.arange(start=1, stop=out_dim + 1)])
+
+        return db
 
     def back_step(self,layer_num):
         if layer_num == self.__range.start:
             return
-        dA = self.get_layer_grads(layer_num)
-        dZ = self.get_activation_grads(layer_num)
-        dZ = np.multiply(dZ,dA)
-        A_prev = self.get_layer_values(layer_num - 1)
-        # To Do
 
+        dA = self.get_layer_grads(layer_num)
+        dG = self.get_activation_grads(layer_num)
+        dZ = np.multiply(dG,dA)
+
+        A_prev = self.get_layer_values(layer_num - 1)
+        m = A_prev.shape[1]
+        dW = (1/m) * np.dot(dZ,A_prev.T)
+        db = (1/m) * np.sum(dZ,axis=1,keepdims=True)
+
+        W = self.__parameters.get_layer_weights(layer_num)
+        dA_prev = np.dot(W.T,dZ)
+
+        self.add_layer_grads(layer_num - 1,dA_prev)
+        self.add_weights_grads(layer_num,dW)
+        self.add_bias_grads(layer_num,db)
 
         self.back_step(layer_num - 1)
