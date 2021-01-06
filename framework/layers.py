@@ -1,7 +1,6 @@
 import numpy as np
 from .parameters import Parameters
 
-
 class Layer:
     """
     Layer is the abstract model of any NN layer
@@ -18,11 +17,7 @@ class Layer:
         self.model_name = kwargs['model_name']
         # Initializing params for saving & retrieving model weights & biases
         self.params = Parameters.get_model(self.model_name)
-
-    def __call__(self, *args, **kwargs):
-        out = self.forward(*args, **kwargs)
-        # self.backward(*args, **kwargs)
-        return out
+        self.layer_num = None
 
     def __init_weights(self, *args, **kwargs):
         raise NotImplementedError
@@ -41,6 +36,9 @@ class Layer:
         """
         raise NotImplementedError
 
+    def set_layer_num(self, layer_num):
+        self.layer_num = layer_num
+
     def calc_grad(self, *args, **kwargs):
         raise NotImplementedError
 
@@ -52,7 +50,6 @@ class Linear(Layer):
     def __init__(self, in_dim, out_dim, layer_num, init_type='random'):
         super().__init__()
         self._init_weights(in_dim, out_dim)
-        self.layer_num = layer_num
         self.init_type = init_type
 
     def __init_weights(self, in_dim, out_dim):
