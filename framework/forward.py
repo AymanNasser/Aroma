@@ -1,4 +1,6 @@
 from .layers import Layer
+from .activations import Activation
+
 
 class Forward:
     """
@@ -18,6 +20,11 @@ class Forward:
             if isinstance(layer, Layer):
                 layer_num +=1
                 layer.set_layer_num(layer_num)
+
+            elif isinstance(layer, Activation):
+                layer.set_layer_num(layer_num)
+
+
 
             X = layer.forward(X)
         return X

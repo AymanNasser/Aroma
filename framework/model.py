@@ -21,6 +21,7 @@ class Model:
         self.loss = loss
         self.optim = optimizer
         self.model_name = model_name
+        self.params = Parameters(self.model_name)
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
