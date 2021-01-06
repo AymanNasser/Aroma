@@ -1,18 +1,14 @@
 import numpy as np
 from .parameters import Parameters
 
+
 class Layer:
     """
     Layer is the abstract model of any NN layer
     """
-
     # We use *args and **kwargs as an argument when we have no doubt about the number of
     # arguments we should pass in a function.
     def __init__(self, *args, **kwargs):
-        # Initializing cache for intermediate results
-        self.cache = {}
-        # Initializing grads for backward prop.
-        self.grads = {}
         # Retrieving model name
         self.model_name = kwargs['model_name']
         # Initializing params for saving & retrieving model weights & biases
@@ -20,6 +16,9 @@ class Layer:
         self.layer_num = None
 
     def __init_weights(self, *args, **kwargs):
+        """
+        Initialize layer weights by a desired approach of initialization
+        """
         raise NotImplementedError
 
     def forward(self, *args, **kwargs):
@@ -39,12 +38,6 @@ class Layer:
     def set_layer_num(self, layer_num):
         self.layer_num = layer_num
 
-    def calc_grad(self, *args, **kwargs):
-        raise NotImplementedError
-
-    def get_grad(self, *args, **kwargs):
-        raise NotImplementedError
-
 
 class Linear(Layer):
     def __init__(self, in_dim, out_dim, layer_num, init_type='random'):
@@ -53,6 +46,7 @@ class Linear(Layer):
         self.init_type = init_type
 
     def __init_weights(self, in_dim, out_dim):
+        assert self.layer_num is None, 'Layer num is not specified'
 
         if self.init_type == 'random':
             self.params.initiate_random(in_dim, out_dim, self.layer_num)
@@ -80,17 +74,9 @@ class Linear(Layer):
 
         assert Z.shape[0] == (W.shape[0], A_prev.shape[1])
 
-        # Caching W & b
-        # self.params.cache['W' + str(self.layer_num)] = W
-        # self.params.cache['b' + str(self.layer_num)] = b
-
-        # Caching A & Z for grads calc.
-        self.cache['A' + str(self.layer_num)] = A_prev
-        self.cache['Z' + str(self.layer_num)] = Z
-
         return Z
 
-    def backward(self, A_prev, Y):
+    def backward(self, dZ):
         """
         Backward pass for linear layer
 
@@ -100,36 +86,27 @@ class Linear(Layer):
             𝑑𝑏[𝑙]= 1/𝑚 * sum(𝑍[𝑙](𝑖))
             𝑑𝐴[𝑙−1]= 𝑊[𝑙].𝑇 * 𝑑𝑍[𝑙]
 
-        Args: None
+        Args:
+            dZ: Gradient of the cost with respect to the linear output (of current layer l)
 
-        Return: None
+        Return:
+            dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+            dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+            db -- Gradient of the cost with respect to b (current layer l), same shape as b
         """
-        A = self.cache['A' + str(self.layer_num)]
+        A_prev = self.params.get_layer_activations(self.layer_num-1) # Must be modified by params module
         W = self.params.get_layer_weights(self.layer_num)
-        b = self.params.get_layer_bias(self.layer_num)
 
         m = A_prev.shape[1] # training samples
-        dZ = (A-Y)
-        dW = (1/m) * A_prev * dZ.T
-        db = np.squeeze(np.sum(dZ, axis=1, keepdims=True))
+
+        dW = (1/m) * np.dot(dZ, A_prev.T)
+        db = (1/m) * np.squeeze(np.sum(dZ, axis=1, keepdims=True))
         dA_prev = np.dot(W.T, dZ)
 
         assert (dA_prev.shape == A_prev.shape)
         assert (dW.shape == W.shape)
 
-        # Caching grads
-        self.grads['dA' + str(self.layer_num -1)] = dA_prev
-        self.grads['dW' + str(self.layer_num )] = dW
-        self.grads['db' + str(self.layer_num)] = db
-
-        # We should make an activation backwards
-        # grads["dA" + str(L)], grads["dW" + str(L)], grads["db" + str(L)] = \
-        # linear_backward(sigmoid_backward())
-
-        return dA_prev
-
-    def calc_grad(self):
-        pass
+        return dA_prev, dW, db
 
 
 class BatchNorm2D(Layer):
