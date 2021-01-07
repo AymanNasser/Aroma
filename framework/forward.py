@@ -24,8 +24,6 @@ class Forward:
             elif isinstance(layer, Activation):
                 layer.set_layer_num(layer_num)
 
-
-
             X = layer.forward(X)
         return X
 

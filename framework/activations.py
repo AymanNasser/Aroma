@@ -1,11 +1,10 @@
 import numpy as np
 
-
 class Activation:
     """
     Activation is an abstract Class of any activation function
     """
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         pass
 
     def forward(self, *args, **kwargs):
@@ -18,7 +17,7 @@ class Activation:
             output: numpy.ndarray containing
             the activation function output
         """
-        pass
+        raise NotImplementedError
 
 
     def get_grad(self, *args, **kwargs):
@@ -28,7 +27,7 @@ class Activation:
             self.grad{}: dictionary containing
             the gradient
         """
-        pass
+        raise NotImplementedError
 
 
 class Sigmoid(Activation):
@@ -62,6 +61,18 @@ class Softmax(Activation):
         S_matrix = np.tile(S_vector, S.shape[0])
         S_dir = np.diag(S) - (S_matrix * np.transpose(S_matrix))
         return S_dir
+
+class LeakyRelU(Activation):
+    def __init__(self, negative_slope=0.01):
+        self.neg_slope = negative_slope
+
+    def forward(self, X):
+        return np.max(0, X) + self.neg_slope * np.min(0, X)
+
+    def get_grad(self, X):
+        l_relu_grad = 1 if X >= 0 else self.neg_slope
+        return l_relu_grad
+
 
 
 # x = np.array([0.1, 0.5, 0.4])
