@@ -1,6 +1,6 @@
 from .layers import Layer
 from .activations import Activation
-
+from .backpropagation import Backward
 
 class Forward:
     """
@@ -10,6 +10,7 @@ class Forward:
         # Model total layers
         self.layers = layers
         self.model_name = model_name
+        self.back = Backward.get_grads_model(self.model_name)
 
     def propagate(self, X):
         """
@@ -27,6 +28,8 @@ class Forward:
 
 
             X = layer.forward(X)
+            if isinstance(layer,Activation):
+                self.back.add_layer_value(layer.layer_num,X)
         return X
 
 
