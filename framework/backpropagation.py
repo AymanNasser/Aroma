@@ -164,9 +164,6 @@ class Backward:
         return db
 
     def back_step(self,layer_num):
-        if layer_num == self.__range.start:
-            return
-
         dA = self.get_layer_grads(layer_num)
         dG = self.get_activation_grads(layer_num)
         dZ = np.multiply(dG,dA)
@@ -183,4 +180,10 @@ class Backward:
         self.add_weights_grads(layer_num,dW)
         self.add_bias_grads(layer_num,db)
 
-        self.back_step(layer_num - 1)
+    def auto_propagation(self,layer_num):
+        if layer_num == self.__range.start:
+            return
+
+        self.back_step(layer_num)
+
+        self.auto_propagation(layer_num - 1)

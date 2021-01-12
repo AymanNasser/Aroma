@@ -3,32 +3,22 @@ import numpy as np
 
 class Loss:
 
-    def __init__(self):
-        # To store the gradient of an operation
-        self.grad = {}
-
-    def __call__(self, Y_pred, Y):
-        loss = self.calc_loss(Y_pred,Y)
-        self.grad = self.calc_grad(Y_pred,Y)
-        return loss
-
-    def calc_loss(self, Y_pred, Y):
+    def calc_loss(self, *args, **kwargs):
         pass
 
-    def calc_grad(self, Y_pred, Y):
+    def calc_grad(self, *args, **kwargs):
         pass
-
-    def get_grad(self):
-        return self.grad
 
 
 class MSELoss(Loss):
 
     def calc_loss(self, Y_pred, Y):
-        pass
+        total_loss = np.sum((Y_pred - Y) ** 2, axis=1, keepdims=True)
+        mean_loss = np.mean(sum)
+        return mean_loss
 
     def calc_grad(self, Y_pred, Y):
-        pass
+        return 2 * (Y_pred - Y) / Y_pred.shape[0]
 
 
 class CrossEntropyLoss(Loss):
