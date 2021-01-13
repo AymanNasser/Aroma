@@ -26,6 +26,7 @@ class Model:
         self.__back = Backward(self.model_name)
         self.__forward = Forward(self.layers,self.model_name)
 
+
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
 
@@ -56,10 +57,22 @@ class Model:
                 dG = layer.get_grad(A_prev)
                 self.__back.add_activation_grads(layer.layer_num,dG)
 
+    # Setting layers grads  
     def zero_grad(self):
         pass
 
     # For updating params
-    def step(self):
-        pass
+    def step(self, learning_rate=0.01):
+
+        for i in range(1,len(self.layers)):
+            
+            if isinstance(self.layers[i], Layer): # If itsn't a layer with weights & biases like linear & conv. so pass
+                weights = self.params.get_layer_weights(i)
+                bias = self.params.get_layer_bias(i)
+
+                weights = weights - learning_rate*self.__back.get_weights_grads(i)
+                bias = bias - learning_rate*self.__back.get_bias_grads(i)
+
+            else:
+                continue
 
