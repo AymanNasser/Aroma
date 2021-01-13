@@ -168,17 +168,7 @@ class Backward:
         dG = self.get_activation_grads(layer_num)
         dZ = np.multiply(dG,dA)
 
-        A_prev = self.get_layer_values(layer_num - 1)
-        m = A_prev.shape[1]
-        dW = (1/m) * np.dot(dZ,A_prev.T)
-        db = (1/m) * np.sum(dZ,axis=1,keepdims=True)
-
-        W = self.__parameters.get_layer_weights(layer_num)
-        dA_prev = np.dot(W.T,dZ)
-
-        self.add_layer_grads(layer_num - 1,dA_prev)
-        self.add_weights_grads(layer_num,dW)
-        self.add_bias_grads(layer_num,db)
+        return dZ
 
     def auto_propagation(self,layer_num):
         if layer_num == self.__range.start:
