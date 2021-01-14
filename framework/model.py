@@ -64,8 +64,8 @@ class Model:
                 self.__back.back_step(layer.layer_num)
             else:
                 dZ = self.__back.get_step_grads(layer.layer_num)
-                A = self.__back.get_layer_values(layer.layer_num)
-                dA_prev, dW, db = layer.backward(dZ,A)
+                A_prev = self.__back.get_layer_values(layer.layer_num - 1)
+                dA_prev, dW, db = layer.backward(dZ,A_prev)
                 self.__back.add_layer_grads(layer.layer_num - 1, dA_prev)
                 self.__back.add_weights_grads(layer.layer_num, dW)
                 self.__back.add_bias_grads(layer.layer_num, db)

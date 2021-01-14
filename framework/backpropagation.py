@@ -44,25 +44,24 @@ class Backward:
         self.__class__.__instances[model_name] = self
 
     def __is_layer_exist(self,layer_name):
-        if layer_name not in self.__forward.keys() or layer_name not in self.__gradients.keys():
+        if layer_name not in self.__forward.keys() and layer_name not in self.__gradients.keys():
             raise AttributeError(layer_name + " isn't exist")
 
     def __store_in_dictionary(self,layer_num,tensor,value_key,dict_key,layer_type,value_type):
-        # if layer_num is not None:
-        #     layer_name = "Layer " + str(layer_num)
-        #     self.__is_layer_exist(layer_name)
         layer_name = "Layer " + str(layer_num)
-
         out_dim, in_dim = tensor.shape
         layer_value = {value_key + str(i) + str(j): tensor[i-1,j-1] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
 
+        if layer_name not in self.__forward.keys():
+            self.__forward[layer_name] = {}
+        if layer_name not in self.__gradients.keys():
+            self.__gradients[layer_name] = {}
+        temp_dict = {layer_type: {dict_key: layer_value, "Dimensions": (out_dim, in_dim)}}
 
         if value_type == "value":
-            self.__forward[layer_name] = {}
-            self.__forward[layer_name][layer_type] = {dict_key: layer_value, "Dimensions": (out_dim, in_dim)}
+            self.__forward[layer_name].update(temp_dict)
         elif value_type == "gradient":
-            self.__gradients[layer_name] = {}
-            self.__gradients[layer_name][layer_type] = {dict_key: layer_value, "Dimensions": (out_dim, in_dim)}
+            self.__gradients[layer_name].update(temp_dict)
 
     def add_layer_values(self,layer_num,A):
         self.__store_in_dictionary(layer_num, A, 'a', 'A', "Layer", "value")
@@ -105,7 +104,7 @@ class Backward:
             layer_value = self.__forward[layer_name][layer_type][dict_key]
             out_dim, in_dim = self.__forward[layer_name][layer_type]["Dimensions"]
 
-        elif value_type == "gradient":
+        elif value_type == "gradients":
             layer_value = self.__gradients[layer_name][layer_type][dict_key]
             out_dim, in_dim = self.__gradients[layer_name][layer_type]["Dimensions"]
 
