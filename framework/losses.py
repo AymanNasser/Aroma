@@ -14,7 +14,7 @@ class MSELoss(Loss):
 
     def calc_loss(self, Y_pred, Y):
         total_loss = np.sum((Y_pred - Y) ** 2, axis=1, keepdims=True)
-        mean_loss = np.mean(sum)
+        mean_loss = np.mean(total_loss)
         return mean_loss
 
     def calc_grad(self, Y_pred, Y):

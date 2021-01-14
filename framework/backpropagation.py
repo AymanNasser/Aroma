@@ -44,20 +44,24 @@ class Backward:
         self.__class__.__instances[model_name] = self
 
     def __is_layer_exist(self,layer_name):
-        if layer_name not in self.__parameters.keys():
-            raise RuntimeError(layer_name + " isn't exist")
+        if layer_name not in self.__forward.keys() or layer_name not in self.__gradients.keys():
+            raise AttributeError(layer_name + " isn't exist")
 
     def __store_in_dictionary(self,layer_num,tensor,value_key,dict_key,layer_type,value_type):
-        if layer_num is not None:
-            layer_name = "Layer " + str(layer_num)
-            self.__is_layer_exist(layer_name)
+        # if layer_num is not None:
+        #     layer_name = "Layer " + str(layer_num)
+        #     self.__is_layer_exist(layer_name)
+        layer_name = "Layer " + str(layer_num)
 
         out_dim, in_dim = tensor.shape
-        layer_value = {value_key + str(i) + str(j): tensor[i, j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+        layer_value = {value_key + str(i) + str(j): tensor[i-1,j-1] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+
 
         if value_type == "value":
+            self.__forward[layer_name] = {}
             self.__forward[layer_name][layer_type] = {dict_key: layer_value, "Dimensions": (out_dim, in_dim)}
         elif value_type == "gradient":
+            self.__gradients[layer_name] = {}
             self.__gradients[layer_name][layer_type] = {dict_key: layer_value, "Dimensions": (out_dim, in_dim)}
 
     def add_layer_values(self,layer_num,A):
@@ -68,13 +72,13 @@ class Backward:
 
     def add_prediction_values(self,AL):
         out_dim, in_dim = AL.shape
-        layer_value = {'al' + str(i) + str(j): AL[i, j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+        layer_value = {'al' + str(i) + str(j): AL[i-1, j-1] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
 
         self.__forward["Prediction"] = {"AL": layer_value, "Dimensions": (out_dim, in_dim)}
 
     def add_prediction_grads(self,dAL):
         out_dim, in_dim = dAL.shape
-        layer_value = {'dal' + str(i) + str(j): dAL[i, j] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
+        layer_value = {'dal' + str(i) + str(j): dAL[i-1, j-1] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
 
         self.__gradients["Prediction"] = {"dAL": layer_value, "Dimensions": (out_dim, in_dim)}
 

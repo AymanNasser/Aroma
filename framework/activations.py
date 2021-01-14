@@ -1,12 +1,14 @@
 import numpy as np
 
-
 class Activation:
     """
     Activation is an abstract Class of any activation function
     """
     def __init__(self, *args, **kwargs):
-        pass
+        self.layer_num = None
+
+    def set_layer_number(self, layer_num):
+        self.layer_num = layer_num
 
     def forward(self, *args, **kwargs):
         """

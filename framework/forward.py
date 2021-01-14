@@ -1,6 +1,6 @@
-from .layers import Layer
-from .activations import Activation
-from .backpropagation import Backward
+from layers import Layer
+from activations import Activation
+from backpropagation import Backward
 
 class Forward:
     """
@@ -19,9 +19,9 @@ class Forward:
         for layer in self.layers:
             X = layer.forward(X)
             if isinstance(layer,Activation):
-                self.back.add_layer_value(layer.layer_num,X)
+                self.back.add_layer_values(layer.layer_num,X)
             elif isinstance(layer,Layer):
-                self.back.add_activation_values(X)
+                self.back.add_activation_values(layer.layer_num,X)
         return X
 
 

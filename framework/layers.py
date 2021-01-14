@@ -1,5 +1,5 @@
 import numpy as np
-from .parameters import Parameters
+from parameters import Parameters
 
 
 class Layer:
@@ -10,12 +10,12 @@ class Layer:
     # arguments we should pass in a function.
     def __init__(self, *args, **kwargs):
         # Retrieving model name
-        self.model_name = kwargs['model_name']
         # Initializing params for saving & retrieving model weights & biases
-        self.params = Parameters.get_model(self.model_name)
+        self.model_name = None
+        self.params = None
         self.layer_num = None
 
-    def __init_weights(self, *args, **kwargs):
+    def init_weights(self, *args, **kwargs):
         """
         Initialize layer weights by a desired approach of initialization
         """
@@ -35,23 +35,25 @@ class Layer:
         """
         raise NotImplementedError
 
-    def set_layer_num(self, layer_num):
+    def set_layer_attributes(self, layer_num, model_name):
         self.layer_num = layer_num
+        self.model_name = model_name
+        self.params = Parameters.get_model(self.model_name)
 
 
 class Linear(Layer):
-    def __init__(self, in_dim, out_dim, layer_num, init_type='random'):
+    def __init__(self, in_dim, out_dim,init_type='random'):
         super().__init__()
-        self._init_weights(in_dim, out_dim)
         self.init_type = init_type
+        self.in_dim = in_dim
+        self.out_dim = out_dim
 
-    def __init_weights(self, in_dim, out_dim):
-        assert self.layer_num is None, 'Layer num is not specified'
+    def init_weights(self):
 
         if self.init_type == 'random':
-            self.params.initiate_random(in_dim, out_dim, self.layer_num)
+            self.params.initiate_random(self.in_dim, self.out_dim, self.layer_num)
         elif self.init_type == 'zero':
-            self.params.initiate_zeros(in_dim, out_dim, self.layer_num)
+            self.params.initiate_zeros(self.in_dim, self.out_dim, self.layer_num)
         elif self.init_type == 'xavier':
             pass # Call init_xavier
         else:
@@ -72,7 +74,7 @@ class Linear(Layer):
         b = self.params.get_layer_bias(self.layer_num)
         Z = np.dot(W, A_prev) + b
 
-        assert Z.shape[0] == (W.shape[0], A_prev.shape[1])
+        #assert Z.shape[0] == (W.shape[0], A_prev.shape[1])
 
         return Z
 
@@ -112,10 +114,10 @@ class BatchNorm2D(Layer):
     """
     Batch normalization layer
     """
-    def __init__(self, num_features, layer_num, epsilon=1e-05):
+    def __init__(self, num_features, epsilon=1e-05):
         super(self).__init__()
         self.channels = num_features
-        self.layer_num = layer_num
+        #self.layer_num = layer_num
         self.epsilon = epsilon
 
     def forward(self):

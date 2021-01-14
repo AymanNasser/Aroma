@@ -1,10 +1,10 @@
 import numpy as np
-from .losses import Loss
-from .layers import Layer
-from .parameters import Parameters
-from .activations import Activation
-from .forward import Forward
-from .backpropagation import Backward
+from losses import Loss
+from layers import Layer
+from parameters import Parameters
+from activations import Activation
+from forward import Forward
+from backpropagation import Backward
 
 
 class Model:
@@ -12,27 +12,30 @@ class Model:
     Model module for encapsulating layers, losses & activations into a single network
     """
 
-    def __init__(self, layers , loss : Loss, optimizer, model_name="Model_1"):
+    def __init__(self, layers , loss : Loss, optimizer="", model_name="Model_1"):
         assert isinstance(loss, Loss)
         # assert isinstance(optimizer, Optim)
         for layer in layers:
-            assert isinstance(layers, Layer) or isinstance(layer, Activation)
+            assert isinstance(layer, Layer) or isinstance(layer, Activation)
 
-        self.layers = layers
-        layer_num = 0
-        for layer in self.layers:
-            if isinstance(layer, Layer):
-                layer_num += 1
-                layer.set_layer_num(layer_num)
-
-            elif isinstance(layer, Activation):
-                layer.set_layer_num(layer_num)
         self.loss = loss
         self.optim = optimizer
         self.model_name = model_name
         self.params = Parameters(self.model_name)
-        self.__back = Backward(self.model_name,0,layer_num)
-        self.__forward = Forward(self.layers,self.model_name)
+
+        self.layers = layers
+        self.layer_num = 0
+        for layer in self.layers:
+            if isinstance(layer, Layer):
+                self.layer_num += 1
+                layer.set_layer_attributes(self.layer_num,model_name)
+                layer.init_weights()
+
+            elif isinstance(layer, Activation):
+                layer.set_layer_number(self.layer_num)
+
+        self.__back = Backward(self.model_name, 0, self.layer_num)
+        self.__forward = Forward(self.layers, self.model_name)
 
 
     def __call__(self, *args, **kwargs):
@@ -41,10 +44,9 @@ class Model:
     def forward(self, X):
         """
         """
-        return self.forward.Propagate(X)
+        return self.__forward.propagate(X)
 
-    def compute_cost(self,Y):
-        Y_pred = self.__back.get_layer_values(len(self.layers))
+    def compute_cost(self,Y,Y_pred):
 
         cost = self.loss.calc_loss(Y_pred,Y)
         dAL = self.loss.calc_grad(Y_pred,Y)
@@ -86,4 +88,3 @@ class Model:
 
             else:
                 continue
-
