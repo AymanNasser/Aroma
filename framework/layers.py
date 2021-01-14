@@ -76,7 +76,7 @@ class Linear(Layer):
 
         return Z
 
-    def backward(self, dZ):
+    def backward(self, dZ, A_prev):
         """
         Backward pass for linear layer
 
@@ -94,7 +94,6 @@ class Linear(Layer):
             dW -- Gradient of the cost with respect to W (current layer l), same shape as W
             db -- Gradient of the cost with respect to b (current layer l), same shape as b
         """
-        A_prev = self.params.get_layer_activations(self.layer_num-1) # Must be modified by params module
         W = self.params.get_layer_weights(self.layer_num)
 
         m = A_prev.shape[1] # training samples
