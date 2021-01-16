@@ -147,8 +147,8 @@ class Parameters:
         return weights
 
     def update_layer_parameters(self, layer_num, weights, bias):
-        layer_name = "Layer" + str(layer_num)
-        if layer_num not in self.__parameters.keys():
+        layer_name = "Layer " + str(layer_num)
+        if layer_name not in self.__parameters.keys():
             raise AttributeError(layer_name + " doesn't exist")
 
         out_dim, in_dim = self.__parameters[layer_name]["Dimensions"]

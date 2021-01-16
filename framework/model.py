@@ -90,7 +90,7 @@ class Model:
                 bias = bias - learning_rate*self.__back.get_bias_grads(i)
 
                 # Setting updated weights
-                self.params.update_layer_parameters(layer_num, weights, bias)
+                self.params.update_layer_parameters(i, weights, bias)
                 
             else:
                 continue
