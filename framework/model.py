@@ -62,6 +62,7 @@ class Model:
                 dG = layer.get_grad(G)
                 self.__back.add_activation_grads(layer.layer_num, dG)
                 self.__back.back_step(layer.layer_num)
+                # print("dG",dG)
             else:
                 dZ = self.__back.get_step_grads(layer.layer_num)
                 A_prev = self.__back.get_layer_values(layer.layer_num - 1)
@@ -69,6 +70,7 @@ class Model:
                 self.__back.add_layer_grads(layer.layer_num - 1, dA_prev)
                 self.__back.add_weights_grads(layer.layer_num, dW)
                 self.__back.add_bias_grads(layer.layer_num, db)
+                # print("dA",dA_prev)
 
     # Setting layers grads  
     def zero_grad(self):
@@ -85,6 +87,10 @@ class Model:
 
                 weights = weights - learning_rate*self.__back.get_weights_grads(i)
                 bias = bias - learning_rate*self.__back.get_bias_grads(i)
+
+                # Setting updated weights
+                # self.params.set_layer_weights(i, weights) 
+                # self.params.set_layer_bias(i, bias)
 
             else:
                 continue

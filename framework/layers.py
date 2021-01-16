@@ -74,7 +74,7 @@ class Linear(Layer):
         b = self.params.get_layer_bias(self.layer_num)
         Z = np.dot(W, A_prev) + b
 
-        #assert Z.shape[0] == (W.shape[0], A_prev.shape[1])
+        assert Z.shape == (W.shape[0], A_prev.shape[1])
 
         return Z
 
@@ -103,6 +103,8 @@ class Linear(Layer):
         dW = (1/m) * np.dot(dZ, A_prev.T)
         db = (1/m) * np.sum(dZ, axis=1, keepdims=True)
         dA_prev = np.dot(W.T, dZ)
+
+        assert dW.shape == W.shape
 
         return dA_prev, dW, db
 
