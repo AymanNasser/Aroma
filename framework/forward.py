@@ -23,6 +23,7 @@ class Forward:
                 self.back.add_layer_values(layer.layer_num,X)
             elif isinstance(layer,Layer):
                 self.back.add_activation_values(layer.layer_num,X)
+            # print(X, len(X))
         return X
 
 
