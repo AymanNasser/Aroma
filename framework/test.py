@@ -14,6 +14,7 @@ result = model.forward(X)
 loss = model.compute_cost(np.array([[0.5]]),np.array([[0.5]]))
 
 model.backward()
+model.step()
 
 print(result,loss)
 
