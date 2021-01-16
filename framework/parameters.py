@@ -95,7 +95,7 @@ class Parameters:
         if layer_num == 0:
             raise AttributeError("Can't initialize weights for layer zero")
         W = np.random.randn(out_dim,in_dim)
-        b = np.random.randn(out_dim,1)
+        b = np.zeros((out_dim,1))
         self.__add_weights(W,b,in_dim,out_dim,layer_num)
 
     def initiate_xavier(self, in_dim, out_dim, layer_num):
@@ -111,24 +111,23 @@ class Parameters:
         if layer_num == 0:
             raise AttributeError("Can't initialize weights for layer zero")
 
-        mean = 0
         variance = 1 / np.sqrt(in_dim)
-        W = variance * np.random.randn(out_dim, in_dim) + mean
-        b = np.zeros(out_dim, 1)
+        W = variance * np.random.randn(out_dim, in_dim) 
+        b = np.zeros((out_dim, 1))
         self.__add_weights(W,b,in_dim,out_dim,layer_num)
-            
+
 
     def get_layer_parameters(self,layer_num):
         layer_name = "Layer " + str(layer_num)
         if layer_name not in self.__parameters.keys():
-            raise RuntimeError(layer_name + " doesn't exist")
+            raise AttributeError(layer_name + " doesn't exist")
 
         return self.__parameters[layer_name]["Parameters"]
 
     def get_layer_bias(self,layer_num):
         layer_name = "Layer " + str(layer_num)
         if layer_name not in self.__parameters.keys():
-            raise RuntimeError(layer_name + " doesn't exist")
+            raise AttributeError(layer_name + " doesn't exist")
 
         parameters_dict = self.__parameters[layer_name]["Parameters"]
         out_dim, _ = self.__parameters[layer_name]["Dimensions"]
@@ -139,7 +138,7 @@ class Parameters:
     def get_layer_weights(self,layer_num):
         layer_name = "Layer " + str(layer_num)
         if layer_name not in self.__parameters.keys():
-            raise RuntimeError(layer_name + " doesn't exist")
+            raise AttributeError(layer_name + " doesn't exist")
 
         parameters_dict = self.__parameters[layer_name]["Parameters"]
         out_dim, in_dim = self.__parameters[layer_name]["Dimensions"]
@@ -147,24 +146,19 @@ class Parameters:
 
         return weights
 
-    # def set_layer_weights(self, layer_num, weights):
-    #     layer_num = "Layer" + str(layer_num)
-    #     if layer_num not in self.__parameters.keys():
-    #         raise RuntimeError(layer_name + " doesn't exist")
+    def update_layer_parameters(self, layer_num, weights, bias):
+        layer_name = "Layer" + str(layer_num)
+        if layer_num not in self.__parameters.keys():
+            raise AttributeError(layer_name + " doesn't exist")
 
-    #     self.__parameters[layer_name]["Parameters"] = weights
-
-    # def set_layer_bias(self, layer_num, bias):
-    #     layer_num = "Layer" + str(layer_num)
-    #     if layer_num not in self.__parameters.keys():
-    #         raise RuntimeError(layer_name + " doesn't exist")
-
+        out_dim, in_dim = self.__parameters[layer_name]["Dimensions"]
+        self.__add_weights(weights, bias, in_dim, out_dim, layer_num) 
 
 
     def get_layer_dim(self,layer_num):
         layer_name = "Layer " + str(layer_num)
         if layer_name not in self.__parameters.keys():
-            raise RuntimeError(layer_name + " doesn't exist")
+            raise AttributeError(layer_name + " doesn't exist")
 
         return self.__parameters[layer_name]["Dimensions"]
 
