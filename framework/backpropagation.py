@@ -104,7 +104,7 @@ class Backward:
             layer_value = self.__forward[layer_name][layer_type][dict_key]
             out_dim, in_dim = self.__forward[layer_name][layer_type]["Dimensions"]
 
-        elif value_type == "gradients":
+        elif value_type == "gradient":
             layer_value = self.__gradients[layer_name][layer_type][dict_key]
             out_dim, in_dim = self.__gradients[layer_name][layer_type]["Dimensions"]
 
@@ -132,16 +132,16 @@ class Backward:
         return dAL
 
     def get_layer_grads(self, layer_num):
-        return self.__get_from_dictionary(layer_num, 'da', 'dA', "Layer", "gradients")
+        return self.__get_from_dictionary(layer_num, 'da', 'dA', "Layer", "gradient")
 
     def get_activation_grads(self, layer_num):
-        return self.__get_from_dictionary(layer_num, 'dg', 'dG', "Activation", "gradients")
+        return self.__get_from_dictionary(layer_num, 'dg', 'dG', "Activation", "gradient")
 
     def get_step_grads(self, layer_num):
-        return self.__get_from_dictionary(layer_num, 'dz', 'dZ', "Backward", "gradients")
+        return self.__get_from_dictionary(layer_num, 'dz', 'dZ', "Backward", "gradient")
 
     def get_weights_grads(self, layer_num):
-        return self.__get_from_dictionary(layer_num, 'dw', 'dW', "Parameters", "gradients")
+        return self.__get_from_dictionary(layer_num, 'dw', 'dW', "Parameters", "gradient")
 
     def get_bias_grads(self, layer_num):
         return self.__get_from_dictionary(layer_num, 'db', 'db', "Parameters", "gradients")
