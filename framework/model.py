@@ -72,6 +72,7 @@ class Model:
                 self.__back.add_bias_grads(layer.layer_num, db)
                 # print("dA",dA_prev)
 
+
     # Setting layers grads  
     def zero_grad(self):
         pass

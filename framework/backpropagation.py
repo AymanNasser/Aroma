@@ -53,15 +53,15 @@ class Backward:
         layer_value = {value_key + str(i) + str(j): tensor[i-1,j-1] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
 
         if layer_name not in self.__forward.keys():
-            self.__forward[layer_name] = {}
+            self.__forward[layer_name] = {"Layer":{},"Activation":{},"Backward":{},"Parameters":{}}
         if layer_name not in self.__gradients.keys():
-            self.__gradients[layer_name] = {}
-        temp_dict = {layer_type: {dict_key: layer_value, "Dimensions": (out_dim, in_dim)}}
+            self.__gradients[layer_name] = {"Layer":{},"Activation":{},"Backward":{},"Parameters":{}}
+        temp_dict = {dict_key: layer_value, "Dimensions": (out_dim, in_dim)}
 
         if value_type == "value":
-            self.__forward[layer_name].update(temp_dict)
+            self.__forward[layer_name][layer_type].update(temp_dict)
         elif value_type == "gradient":
-            self.__gradients[layer_name].update(temp_dict)
+            self.__gradients[layer_name][layer_type].update(temp_dict)
 
     def add_layer_values(self,layer_num,A):
         self.__store_in_dictionary(layer_num, A, 'a', 'A', "Layer", "value")
@@ -144,7 +144,7 @@ class Backward:
         return self.__get_from_dictionary(layer_num, 'dw', 'dW', "Parameters", "gradient")
 
     def get_bias_grads(self, layer_num):
-        return self.__get_from_dictionary(layer_num, 'db', 'db', "Parameters", "gradients")
+        return self.__get_from_dictionary(layer_num, 'db', 'db', "Parameters", "gradient")
 
     def back_step(self,layer_num):
         dA = None
