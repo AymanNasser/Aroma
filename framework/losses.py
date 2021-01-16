@@ -32,7 +32,8 @@ class CrossEntropyLoss(Loss):
         y is labels (num_examples x 1): one hot encode vector
         """
         m = Y.shape[0]
-        p = activations.Softmax(Y_pred)
+        p = activations.Softmax()
+        p = p.forward(Y_pred)
         log_likelihood = -np.log(p[range(m), Y])
         loss = np.sum(log_likelihood) / m
         return loss
@@ -43,7 +44,8 @@ class CrossEntropyLoss(Loss):
         y is labels (num_examples x 1): one hot encode vector
         """
         m = Y.shape[0]
-        grad = activations.softmax(Y_pred)
+        grad = activations.Softmax()
+        grad = grad.forward(Y_pred)
         grad[range(m), Y] -= 1
         grad = grad / m
         return grad
