@@ -16,14 +16,14 @@ class Forward:
         """
         Propagating the input (X) of dim (batch_size, in_dim) through model layers
         """
-        self.back.add_layer_values(0,X)
+        self.back.add_layer_values(0,X.T)
+        X = X.T
         for layer in self.layers:
             X = layer.forward(X)
             if isinstance(layer,Activation):
                 self.back.add_layer_values(layer.layer_num,X)
             elif isinstance(layer,Layer):
                 self.back.add_activation_values(layer.layer_num,X)
-            # print(X, len(X))
         return X
 
 
