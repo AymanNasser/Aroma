@@ -70,6 +70,7 @@ class Model:
                 self.__back.add_weights_grads(layer.layer_num, dW)
                 self.__back.add_bias_grads(layer.layer_num, db)
 
+
     # Setting layers grads  
     def zero_grad(self):
         pass
