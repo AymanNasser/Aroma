@@ -1,5 +1,5 @@
 import numpy as np
-
+import pickle
 
 class Parameters:
     """
@@ -54,6 +54,8 @@ class Parameters:
         if model_name in self.__class__.__instances.keys():
             raise AttributeError("The model with name " + model_name + " already exist")
         self.__model_name = model_name
+        self.__parameters_num = 0
+        self.__extension = ".pa"
         self.__parameters = {}
 
         # add the object of the class itself to the dictionary
@@ -81,18 +83,21 @@ class Parameters:
 
     def initiate_zeros(self,in_dim,out_dim,layer_num):
         self.__check_attributes(layer_num,in_dim)
+        self.__parameters_num += out_dim * (in_dim+1)
         W = np.zeros((out_dim,in_dim))
         b = np.zeros((out_dim,1))
         self.__add_weights(W,b,layer_num)
 
     def initiate_random(self,in_dim,out_dim,layer_num):
         self.__check_attributes(layer_num,in_dim)
+        self.__parameters_num += out_dim * (in_dim + 1)
         W = np.random.randn(out_dim,in_dim)
         b = np.zeros((out_dim,1))
         self.__add_weights(W,b,layer_num)
 
     def initiate_xavier(self,in_dim,out_dim,layer_num):
         self.__check_attributes(layer_num,in_dim)
+        self.__parameters_num += out_dim * (in_dim + 1)
         variance = 1 / np.sqrt(in_dim)
         W = variance * np.random.randn(out_dim, in_dim) 
         b = np.zeros((out_dim, 1))
@@ -124,3 +129,13 @@ class Parameters:
         layer_name = "Layer " + str(layer_num)
         self.__is_layer_exist(layer_name)
         return self.__parameters[layer_name]["W"].shape
+
+    def save_weights(self):
+        file_name = self.__model_name + '_' + str(self.__parameters_num) + self.__extension
+        with open(file_name,'ab') as file:
+            pickle.dump(self.__parameters,file)
+
+    def load_weights(self,path_to_file):
+        with open(path_to_file,'rb') as file:
+            self.__parameters = pickle.load(file)
+            print(self.__parameters)

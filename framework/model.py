@@ -92,3 +92,9 @@ class Model:
                 
             else:
                 continue
+
+    def save_model(self):
+        self.__params.save_weights()
+
+    def load_model(self,path_to_model):
+        self.__params.load_weights(path_to_model)

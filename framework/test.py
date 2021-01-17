@@ -14,3 +14,5 @@ for i in range(50):
 
 print(result,loss)
 
+model.save_model()
+model.load_model("mnist_51.pa")
