@@ -138,4 +138,6 @@ class Parameters:
     def load_weights(self,path_to_file):
         with open(path_to_file,'rb') as file:
             self.__parameters = pickle.load(file)
-            print(self.__parameters)
+
+    def get_weights_number(self):
+        return self.__parameters_num
