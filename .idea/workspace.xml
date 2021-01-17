@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="83ced426-7a39-4385-84f6-65c9cf1e665f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/framework/backpropagation.py" beforeDir="false" afterPath="$PROJECT_DIR$/framework/backpropagation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/framework/mnist_51.pa" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/framework/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/framework/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/framework/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/framework/parameters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/framework/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/framework/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

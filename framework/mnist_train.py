@@ -12,6 +12,9 @@ model = Model([Linear(X_train.shape[1],10),Sigmoid(),Linear(10,1),Sigmoid()],MSE
 
 epoch = 8
 j = 0
+
+
+
 for i in range(epoch):
 
     y_pred = model.forward(X_train[j:j+1000, :])

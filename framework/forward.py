@@ -6,24 +6,23 @@ class Forward:
     """
     Forward propagation module
     """
-    def __init__(self, layers, model_name):
+    def __init__(self, layers,model_name):
         # Model total layers
-        self.layers = layers
-        self.model_name = model_name
-        self.back = Backward.get_backward_model(self.model_name)
+        self.__layers = layers
+        self.__model_name = model_name
+        self.__back = Backward.get_backward_model(self.__model_name)
 
     def propagate(self, X):
         """
         Propagating the input (X) of dim (batch_size, in_dim) through model layers
         """
-        self.back.add_layer_values(0,X.T)
-        X = X.T
-        for layer in self.layers:
+        self.__back.add_layer_values(0,X)
+        for layer in self.__layers:
             X = layer.forward(X)
             if isinstance(layer,Activation):
-                self.back.add_layer_values(layer.layer_num,X)
+                self.__back.add_layer_values(layer.layer_num,X)
             elif isinstance(layer,Layer):
-                self.back.add_activation_values(layer.layer_num,X)
+                self.__back.add_activation_values(layer.layer_num,X)
         return X
 
 

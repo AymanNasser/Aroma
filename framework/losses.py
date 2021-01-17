@@ -1,4 +1,7 @@
 import numpy as np
+import activations
+
+from framework import activations
 
 
 class Loss:
@@ -24,7 +27,27 @@ class MSELoss(Loss):
 class CrossEntropyLoss(Loss):
 
     def calc_loss(self, Y_pred, Y):
-        pass
+        """
+        X is the output from fully connected layer (num_examples x num_classes)
+        y is labels (num_examples x 1): one hot encode vector
+        """
+        m = Y.shape[0]
+        p = activations.Softmax()
+        p = p.forward(Y_pred)
+        log_likelihood = -np.log(p[range(m), Y])
+        loss = np.sum(log_likelihood) / m
+        return loss
 
     def calc_grad(self, Y_pred, Y):
-        pass
+        """
+        X is the output from fully connected layer (num_examples x num_classes)
+        y is labels (num_examples x 1): one hot encode vector
+        """
+        m = Y.shape[0]
+        grad = activations.Softmax()
+        grad = grad.forward(Y_pred)
+        grad[range(m), Y] -= 1
+        grad = grad / m
+        return grad
+
+

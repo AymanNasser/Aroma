@@ -1,5 +1,5 @@
 import numpy as np
-
+import pickle
 
 class Parameters:
     """
@@ -54,128 +54,90 @@ class Parameters:
         if model_name in self.__class__.__instances.keys():
             raise AttributeError("The model with name " + model_name + " already exist")
         self.__model_name = model_name
+        self.__parameters_num = 0
+        self.__extension = ".pa"
         self.__parameters = {}
 
         # add the object of the class itself to the dictionary
         self.__class__.__instances[model_name] = self
 
-    def __add_weights(self,W,b,in_dim,out_dim,layer_num):
-        layer_parameters = {}
-        weights = {'w' + str(i) + str(j): W[i - 1, j - 1] for i in np.arange(start=1, stop=out_dim + 1) for j in np.arange(start=1, stop=in_dim + 1)}
-        bias = {'b' + str(i): b[i - 1, 0] for i in np.arange(start=1, stop=out_dim + 1)}
-        layer_parameters.update(weights)
-        layer_parameters.update(bias)
+    def __check_attributes(self,layer_num,in_dim):
         layer_name = "Layer " + str(layer_num)
-        self.__parameters[layer_name] = {"Parameters":layer_parameters, "Dimensions":(out_dim, in_dim)}
+        prev_layer_name = "Layer " + str(layer_num - 1)
+        if layer_name in self.__parameters.keys():
+            raise AttributeError(layer_name + " is already initialized")
+        if layer_num > 1 and prev_layer_name not in self.__parameters.keys():
+            raise AttributeError("You must initialize " + prev_layer_name + " first")
+        if layer_num > 1 and self.get_layer_dim(layer_num - 1)[0] != in_dim:
+            raise AttributeError("Dimensions conflict in " + layer_name)
+        if layer_num == 0:
+            raise AttributeError("Can't initialize weights for layer zero")
+
+    def __is_layer_exist(self,layer_name):
+        if layer_name not in self.__parameters.keys():
+            raise AttributeError(layer_name + " doesn't exist")
+
+    def __add_weights(self,W,b,layer_num):
+        layer_name = "Layer " + str(layer_num)
+        self.__parameters[layer_name] = {'W': W,'b': b}
 
     def initiate_zeros(self,in_dim,out_dim,layer_num):
-        layer_name = "Layer " + str(layer_num)
-        prev_layer_name = "Layer " + str(layer_num - 1)
-        if layer_name in self.__parameters.keys():
-            raise AttributeError(layer_name + " is already initialized")
-        if layer_num > 1 and prev_layer_name not in self.__parameters.keys():
-            raise AttributeError("You must initialize " + prev_layer_name + " first")
-        if layer_num > 1 and self.get_layer_dim(layer_num - 1)[0] != in_dim:
-            raise AttributeError("Dimensions conflict in " + layer_name)
-        if layer_num == 0:
-            raise AttributeError("Can't initialize weights for layer zero")
+        self.__check_attributes(layer_num,in_dim)
+        self.__parameters_num += out_dim * (in_dim+1)
         W = np.zeros((out_dim,in_dim))
         b = np.zeros((out_dim,1))
-        self.__add_weights(W,b,in_dim,out_dim,layer_num)
+        self.__add_weights(W,b,layer_num)
 
     def initiate_random(self,in_dim,out_dim,layer_num):
-        layer_name = "Layer " + str(layer_num)
-        prev_layer_name = "Layer " + str(layer_num - 1)
-        if layer_name in self.__parameters.keys():
-            raise AttributeError(layer_name + " is already initialized")
-        if layer_num > 1 and prev_layer_name not in self.__parameters.keys():
-            raise AttributeError("You must initialize " + prev_layer_name + " first")
-        if layer_num > 1 and self.get_layer_dim(layer_num - 1)[0] != in_dim:
-            raise AttributeError("Dimensions conflict in " + layer_name)
-        if layer_num == 0:
-            raise AttributeError("Can't initialize weights for layer zero")
+        self.__check_attributes(layer_num,in_dim)
+        self.__parameters_num += out_dim * (in_dim + 1)
         W = np.random.randn(out_dim,in_dim)
         b = np.zeros((out_dim,1))
-        self.__add_weights(W,b,in_dim,out_dim,layer_num)
+        self.__add_weights(W,b,layer_num)
 
-    def initiate_xavier(self, in_dim, out_dim, layer_num):
-        layer_name = "Layer " + str(layer_num)
-        prev_layer_name = "Layer " + str(layer_num - 1)
-
-        if layer_name in self.__parameters.keys():
-            raise AttributeError(layer_name + " is already initialized")
-        if layer_num > 1 and prev_layer_name not in self.__parameters.keys():
-            raise AttributeError("You must initialize " + prev_layer_name + " first")
-        if layer_num > 1 and self.get_layer_dim(layer_num - 1)[0] != in_dim:
-            raise AttributeError("Dimensions conflict in " + layer_name)
-        if layer_num == 0:
-            raise AttributeError("Can't initialize weights for layer zero")
-
+    def initiate_xavier(self,in_dim,out_dim,layer_num):
+        self.__check_attributes(layer_num,in_dim)
+        self.__parameters_num += out_dim * (in_dim + 1)
         variance = 1 / np.sqrt(in_dim)
         W = variance * np.random.randn(out_dim, in_dim) 
         b = np.zeros((out_dim, 1))
-        self.__add_weights(W,b,in_dim,out_dim,layer_num)
-
+        self.__add_weights(W,b,layer_num)
 
     def get_layer_parameters(self,layer_num):
         layer_name = "Layer " + str(layer_num)
-        if layer_name not in self.__parameters.keys():
-            raise AttributeError(layer_name + " doesn't exist")
-
-        return self.__parameters[layer_name]["Parameters"]
+        self.__is_layer_exist(layer_name)
+        return self.__parameters[layer_name]
 
     def get_layer_bias(self,layer_num):
         layer_name = "Layer " + str(layer_num)
-        if layer_name not in self.__parameters.keys():
-            raise AttributeError(layer_name + " doesn't exist")
-
-        parameters_dict = self.__parameters[layer_name]["Parameters"]
-        out_dim, _ = self.__parameters[layer_name]["Dimensions"]
-        bias = np.array([[parameters_dict['b' + str(row)]] for row in np.arange(start=1, stop=out_dim + 1)])
-
+        self.__is_layer_exist(layer_name)
+        bias = self.__parameters[layer_name]["b"]
         return bias
 
     def get_layer_weights(self,layer_num):
         layer_name = "Layer " + str(layer_num)
-        if layer_name not in self.__parameters.keys():
-            raise AttributeError(layer_name + " doesn't exist")
-
-        parameters_dict = self.__parameters[layer_name]["Parameters"]
-        out_dim, in_dim = self.__parameters[layer_name]["Dimensions"]
-        weights = np.array([[parameters_dict['w' + str(row) + str(col)] for col in np.arange(start=1, stop=in_dim + 1)] for row in np.arange(start=1, stop=out_dim + 1)])
-
+        self.__is_layer_exist(layer_name)
+        weights = self.__parameters[layer_name]["W"]
         return weights
 
-    def update_layer_parameters(self, layer_num, weights, bias):
+    def update_layer_parameters(self,layer_num,W,b):
         layer_name = "Layer " + str(layer_num)
-        if layer_name not in self.__parameters.keys():
-            raise AttributeError(layer_name + " doesn't exist")
-
-        out_dim, in_dim = self.__parameters[layer_name]["Dimensions"]
-        self.__add_weights(weights, bias, in_dim, out_dim, layer_num) 
-
+        self.__is_layer_exist(layer_name)
+        self.__add_weights(W,b,layer_num)
 
     def get_layer_dim(self,layer_num):
         layer_name = "Layer " + str(layer_num)
-        if layer_name not in self.__parameters.keys():
-            raise AttributeError(layer_name + " doesn't exist")
+        self.__is_layer_exist(layer_name)
+        return self.__parameters[layer_name]["W"].shape
 
-        return self.__parameters[layer_name]["Dimensions"]
+    def save_weights(self):
+        file_name = self.__model_name + '_' + str(self.__parameters_num) + self.__extension
+        with open(file_name,'ab') as file:
+            pickle.dump(self.__parameters,file)
 
+    def load_weights(self,path_to_file):
+        with open(path_to_file,'rb') as file:
+            self.__parameters = pickle.load(file)
 
-
-# w = Parameters("PV-RCNN")
-# t = Parameters("PointPillars")
-# w.initiate_zeros(4,3,1)
-# w.initiate_random(3,4,2)
-# t.initiate_random(5,6,1)
-# wieghts = w.get_layer_parameters(1)
-# wieghts["W12"] = 5
-# print(t.get_model_name(),w.get_model_name())
-# aymon = Parameters.get_model("PV-RCNN")
-# print(aymon.get_layer_parameters(1))
-# print(w.get_layer_parameters(1))
-# print(w.get_layer_weights(2))
-# print(w.get_layer_bias(2))
-# print(w.get_layer_dim(1))
-# print(np.array([[i for i in range(10)],[i for i in range(10)]])[1,2])
+    def get_weights_number(self):
+        return self.__parameters_num

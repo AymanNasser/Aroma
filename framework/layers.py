@@ -55,9 +55,9 @@ class Linear(Layer):
         elif self.init_type == 'zero':
             self.params.initiate_zeros(self.in_dim, self.out_dim, self.layer_num)
         elif self.init_type == 'xavier':
-            pass # Call init_xavier
+            self.params.initiate_xavier(self.in_dim, self.out_dim, self.layer_num)
         else:
-            raise AttributeError("Non Supported Type of Init.")
+            raise AttributeError("Non Supported Type of Initialization")
 
     def forward(self, A_prev):
         """
@@ -115,7 +115,6 @@ class BatchNorm2D(Layer):
     def __init__(self, num_features, epsilon=1e-05):
         super(self).__init__()
         self.channels = num_features
-        #self.layer_num = layer_num
         self.epsilon = epsilon
 
     def forward(self):
