@@ -6,7 +6,7 @@ import os
 # print(df.shape)
 
 
-data_loader = DataLoader(split_ratio=0.2, download=False, batch_size=64, shuffle=True) 
+data_loader = DataLoader(split_ratio=0.2, download=True, batch_size=64, shuffle=True) 
 
 X_train, y_train = data_loader.get_train_data()
 dataset = data_loader.get_batched_data(X_train, y_train)

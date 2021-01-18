@@ -42,7 +42,7 @@ class DataLoader:
         else:
             pass
 
-        train_data, test_data = self.__load_data(dataset_name)
+        train_data, test_data = self.__load_data()
         
         X_train, y_train, X_val, y_val = self.__split_data(train_data, self.split_ratio, self.shuffle)
 
@@ -58,7 +58,6 @@ class DataLoader:
 
         self.X_test = self.transform.to_tensor(test_data)
 
-
     def __download_dataset(self, dataset_name):
         """takes a dataset name and download it from **kaggle**, unzip it and remove the zip file"""
 
@@ -72,7 +71,6 @@ class DataLoader:
 
         os.remove(filename)
 
-
     def delete_dataset(self, dataset_name):
         """Removes the downloaded data"""
         if os.path.exists(dataset_name):
@@ -80,12 +78,12 @@ class DataLoader:
         else:
             raise NameError("This dataset doesn't exits")
 
-    
     # Load data from .csv files
-    def __load_data(self, dataset_name):
+    def __load_data(self):
         try:
-            df = pd.read_csv(dataset_name + '/train.csv')
-            df_test = pd.read_csv( dataset_name + '/test.csv')
+            print(self.dataset_path + '/' + self.dataset_name +  '/train.csv')
+            df = pd.read_csv(self.dataset_path + '/' + self.dataset_name +  '/train.csv')
+            df_test = pd.read_csv(self.dataset_path + '/' + self.dataset_name +  '/test.csv')
         except:
             raise OSError("Wrong referred paths for data loading")
 
@@ -98,12 +96,9 @@ class DataLoader:
             Split trainig data which into train and validation dataframes by a split ratio (default 0.2)
         """
         df = train_data
-        
-        if shuffle is True:
-            df_train = df.sample(frac=1-split_ratio)
-            df_validation = df.drop(df_train.index)
-        else:
-            pass
+                
+        df_train = df.sample(frac=1-split_ratio)
+        df_validation = df.drop(df_train.index)
 
         X_train = df_train.iloc[:, 1:] 
         y_train = df_train.iloc[:, 0]
@@ -113,12 +108,11 @@ class DataLoader:
         
         return X_train, y_train, X_val, y_val
     
-
     def __partition(self, X, Y):
         m = X.shape[0]
         mini_batches = []
         num_mini_batches= math.floor(m / self.batch_size)
-        print("Enterd Part")
+        
         for i in range(0, num_mini_batches):
             mini_batch_X = X[i*self.batch_size:(i+1)*self.batch_size , :]
             mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
