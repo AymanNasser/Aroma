@@ -72,9 +72,9 @@ class Linear(Layer):
         """
         W = self.params.get_layer_weights(self.layer_num)
         b = self.params.get_layer_bias(self.layer_num)
-        print(self.layer_num)
-        print(A_prev.shape, W.T.shape, b.shape)
-        Z = np.dot(A_prev, W.T) + b
+        # print(self.layer_num)
+        # print(A_prev.shape, W.shape, b.shape)
+        Z = np.dot(W, A_prev) + b
 
         # assert Z.shape == (W.shape[0], A_prev.shape[1])
 
