@@ -1,8 +1,5 @@
 import numpy as np
-import activations
-
-from framework import activations
-
+from activations import Softmax
 
 class Loss:
 
@@ -32,7 +29,7 @@ class CrossEntropyLoss(Loss):
         y is labels (num_examples x 1): one hot encode vector
         """
         m = Y.shape[0]
-        p = activations.Softmax()
+        p = Softmax()
         p = p.forward(Y_pred)
         log_likelihood = -np.log(p[range(m), Y])
         loss = np.sum(log_likelihood) / m
@@ -44,7 +41,7 @@ class CrossEntropyLoss(Loss):
         y is labels (num_examples x 1): one hot encode vector
         """
         m = Y.shape[0]
-        grad = activations.Softmax()
+        grad = Softmax()
         grad = grad.forward(Y_pred)
         grad[range(m), Y] -= 1
         grad = grad / m

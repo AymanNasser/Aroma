@@ -84,8 +84,8 @@ class DataLoader:
     # Load data from .csv files
     def __load_data(self, dataset_name):
         try:
-            df = pd.read_csv(dataset_name + '/train.csv')
-            df_test = pd.read_csv( dataset_name + '/test.csv')
+            df = pd.read_csv(self.dataset_path + '/' + self.dataset_name + '/train.csv')
+            df_test = pd.read_csv(self.dataset_path + '/' + self.dataset_name + '/test.csv')
         except:
             raise OSError("Wrong referred paths for data loading")
 
@@ -99,11 +99,10 @@ class DataLoader:
         """
         df = train_data
         
-        if shuffle is True:
-            df_train = df.sample(frac=1-split_ratio)
-            df_validation = df.drop(df_train.index)
-        else:
-            pass
+    
+        df_train = df.sample(frac=1-split_ratio)
+        df_validation = df.drop(df_train.index)
+        
 
         X_train = df_train.iloc[:, 1:] 
         y_train = df_train.iloc[:, 0]
@@ -118,7 +117,6 @@ class DataLoader:
         m = X.shape[0]
         mini_batches = []
         num_mini_batches= math.floor(m / self.batch_size)
-        print("Enterd Part")
         for i in range(0, num_mini_batches):
             mini_batch_X = X[i*self.batch_size:(i+1)*self.batch_size , :]
             mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]

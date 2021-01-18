@@ -98,8 +98,7 @@ class Parameters:
     def initiate_xavier(self,in_dim,out_dim,layer_num):
         self.__check_attributes(layer_num,in_dim)
         self.__parameters_num += out_dim * (in_dim + 1)
-        variance = 1 / np.sqrt(in_dim)
-        W = variance * np.random.randn(out_dim, in_dim) 
+        W = np.sqrt(1 / in_dim) * np.random.randn(out_dim, in_dim) 
         b = np.zeros((out_dim, 1))
         self.__add_weights(W,b,layer_num)
 
