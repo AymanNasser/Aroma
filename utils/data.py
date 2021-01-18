@@ -44,21 +44,19 @@ class DataLoader:
 
         train_data, test_data = self.__load_data(dataset_name)
         
-        
         X_train, y_train, X_val, y_val = self.__split_data(train_data, self.split_ratio, self.shuffle)
-        X_test = test_data.iloc[:, 1:]
 
         X_train, y_train, X_val, y_val = self.transform.to_tensor(X_train), \
                                          self.transform.to_tensor(y_train), \
                                          self.transform.to_tensor(X_val), \
                                          self.transform.to_tensor(y_val)
         
-        self.X_train = self.transform.normalize(X_train)
+        self.X_train = X_train
         self.y_train = y_train
-        self.X_val = self.transform.normalize(X_val)
+        self.X_val = X_val
         self.y_val = y_val
 
-        self.X_test = self.transform.to_tensor(X_test)
+        self.X_test = self.transform.to_tensor(test_data)
 
 
     def __download_dataset(self, dataset_name):
@@ -101,8 +99,11 @@ class DataLoader:
         """
         df = train_data
         
-        df_train = df.sample(frac=1-split_ratio)
-        df_validation = df.drop(df_train.index)
+        if shuffle is True:
+            df_train = df.sample(frac=1-split_ratio)
+            df_validation = df.drop(df_train.index)
+        else:
+            pass
 
         X_train = df_train.iloc[:, 1:] 
         y_train = df_train.iloc[:, 0]
@@ -117,10 +118,10 @@ class DataLoader:
         m = X.shape[0]
         mini_batches = []
         num_mini_batches= math.floor(m / self.batch_size)
-
+        print("Enterd Part")
         for i in range(0, num_mini_batches):
             mini_batch_X = X[i*self.batch_size:(i+1)*self.batch_size , :]
-            mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size, :]
+            mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
 
             mini_batch = (mini_batch_X, mini_batch_Y)
             mini_batches.append(mini_batch)
@@ -128,7 +129,7 @@ class DataLoader:
         # Handling the end case (last mini-batch < mini_batch_size)
         if m % self.batch_size != 0:
             mini_batch_X = X[self.batch_size*num_mini_batches:, :]
-            mini_batch_Y = Y[self.batch_size*num_mini_batches:, :]
+            mini_batch_Y = Y[self.batch_size*num_mini_batches:]
 
             mini_batch = (mini_batch_X, mini_batch_Y)
             mini_batches.append(mini_batch)
@@ -137,11 +138,8 @@ class DataLoader:
 
     def get_train_data(self):
         """returns train dataset as array and the train label as a vector"""
-        if self.batch_size != 1:
-            return self.__partition(self.X_train, self.y_train)
-        else:
-            return self.X_train, self.y_train
-        
+        return self.X_train, self.y_train
+
     def get_validation_data(self):
         """returns validation dataset as array and the validation label as a vector"""
         return self.X_val, self.y_val
@@ -162,3 +160,8 @@ class DataLoader:
         """returns the row with the specific index"""
         return self.X_test[index]
 
+    def get_batched_data(self, X, Y):
+        if self.batch_size != 1:
+            return self.__partition(X, Y)
+        else:
+            return self.X_train, self.y_train
