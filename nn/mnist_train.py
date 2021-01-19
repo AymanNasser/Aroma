@@ -17,19 +17,17 @@ import numpy as np
 data_loader = DataLoader('/home/ayman/FOE-Linux/Aroma', batch_size=64)
 X_train, y_train = data_loader.get_train_data()
 batches = data_loader.get_batched_data(X_train, y_train)
-X_train = X_train.T
-y_train = y_train.T
+
 print(X_train.shape, y_train.shape)
 
 model = Model([Linear(X_train.shape[0],10),Sigmoid(),Linear(10,1),Sigmoid()],MSELoss())
 
 epoch = 16
 
-print(X_train.shape)
 for i in range(epoch):
     for X,Y in tqdm(batches):
-        y_pred = model.forward(X.T)
-        loss = model.compute_cost(Y.T, y_pred)
+        y_pred = model.forward(X)
+        loss = model.compute_cost(Y, y_pred)
         model.backward()
         model.step()
         

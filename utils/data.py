@@ -51,12 +51,13 @@ class DataLoader:
                                          self.transform.to_tensor(X_val), \
                                          self.transform.to_tensor(y_val)
         
-        self.X_train = X_train
+        self.X_train = X_train.reshape(X_train.shape[1], X_train.shape[0])
         self.y_train = y_train
-        self.X_val = X_val
+        self.X_val = X_val.reshape(X_val.shape[1], X_val.shape[0])
         self.y_val = y_val
 
         self.X_test = self.transform.to_tensor(test_data)
+        self.X_test = self.X_test.reshape(self.X_test.shape[1], self.X_test.shape[0])
 
 
     def __download_dataset(self, dataset_name):
@@ -114,11 +115,11 @@ class DataLoader:
     
 
     def __partition(self, X, Y):
-        m = X.shape[0]
+        m = X.shape[1]
         mini_batches = []
         num_mini_batches= math.floor(m / self.batch_size)
         for i in range(0, num_mini_batches):
-            mini_batch_X = X[i*self.batch_size:(i+1)*self.batch_size , :]
+            mini_batch_X = X[:, i*self.batch_size:(i+1)*self.batch_size]
             mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
 
             mini_batch = (mini_batch_X, mini_batch_Y)
@@ -126,7 +127,7 @@ class DataLoader:
 
         # Handling the end case (last mini-batch < mini_batch_size)
         if m % self.batch_size != 0:
-            mini_batch_X = X[self.batch_size*num_mini_batches:, :]
+            mini_batch_X = X[:, self.batch_size*num_mini_batches:]
             mini_batch_Y = Y[self.batch_size*num_mini_batches:]
 
             mini_batch = (mini_batch_X, mini_batch_Y)
