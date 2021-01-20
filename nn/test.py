@@ -1,7 +1,7 @@
-from model import Model
-from layers import *
-from activations import *
-from losses import *
+from nn.model import Model
+from nn.layers import *
+from nn.activations import *
+from nn.losses import *
 import numpy as np
 
 model_name = "mnist"

@@ -1,10 +1,9 @@
-import numpy as np
-from losses import Loss
-from layers import Layer
-from parameters import Parameters
-from activations import Activation
-from forward import Forward
-from backpropagation import Backward
+from nn.losses import Loss
+from nn.layers import Layer
+from nn.parameters import Parameters
+from nn.activations import Activation
+from nn.forward import Forward
+from nn.backpropagation import Backward
 
 
 class Model:
@@ -82,17 +81,17 @@ class Model:
     # For updating params
     def step(self, learning_rate=0.01):
 
-        for i in range(1,len(self.__layers)):
+        for layer in self.__layers:
             
-            if isinstance(self.__layers[i], Layer): # If itsn't a layer with weights & biases like linear & conv. so pass
-                weights = self.__params.get_layer_weights(i)
-                bias = self.__params.get_layer_bias(i)
+            if isinstance(layer, Layer): # If itsn't a layer with weights & biases like linear & conv. so pass
+                weights = self.__params.get_layer_weights(layer.layer_num)
+                bias = self.__params.get_layer_bias(layer.layer_num)
 
-                weights = weights - learning_rate*self.__back.get_weights_grads(i)
-                bias = bias - learning_rate*self.__back.get_bias_grads(i)
+                weights = weights - learning_rate*self.__back.get_weights_grads(layer.layer_num)
+                bias = bias - learning_rate*self.__back.get_bias_grads(layer.layer_num)
 
                 # Setting updated weights
-                self.__params.update_layer_parameters(i, weights, bias)
+                self.__params.update_layer_parameters(layer.layer_num, weights, bias)
                 
             else:
                 continue

@@ -1,5 +1,4 @@
 import numpy as np
-from activations import Softmax
 
 class Loss:
 
@@ -40,7 +39,6 @@ class CrossEntropyLoss(Loss):
         y is labels (num_examples x 1): one hot encode vector
         """
         Y = Y.T
-        print(Y_pred.shape,Y.shape)
         m = Y.shape[-1]
         Y_pred[Y-1, range(m)] -= 1
         Y_pred = Y_pred / m
