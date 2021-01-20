@@ -1,5 +1,5 @@
 import numpy as np
-from parameters import Parameters
+from nn.parameters import Parameters
 
 
 class Layer:

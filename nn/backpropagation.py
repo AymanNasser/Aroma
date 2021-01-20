@@ -1,5 +1,4 @@
 import numpy as np
-from parameters import Parameters
 
 class Range:
     start = None

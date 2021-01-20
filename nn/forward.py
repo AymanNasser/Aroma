@@ -1,6 +1,6 @@
-from layers import Layer
-from activations import Activation
-from backpropagation import Backward
+from nn.layers import Layer
+from nn.activations import Activation
+from nn.backpropagation import Backward
 
 class Forward:
     """

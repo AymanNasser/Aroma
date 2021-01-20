@@ -62,12 +62,10 @@ class Softmax(Activation):
         return out
 
     def get_grad(self, X):
-        S = self.forward(X)
-        S_vector = S.reshape(1, S.shape[-1])
-        S_matrix = np.tile(S_vector, S.shape[-1])
-        S_dir = np.diag(S) - (S_matrix * np.transpose(S_matrix))
-        return S_dir
-
+        exp_x = np.exp(X)
+        sum = np.sum(exp_x)
+        grad = (exp_x*(sum - 1))/np.square(sum)
+        return grad
 
 
 class LeakyRelU(Activation):

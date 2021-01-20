@@ -1,5 +1,4 @@
 import numpy as np
-from activations import Softmax
 
 class Loss:
 
@@ -28,9 +27,8 @@ class CrossEntropyLoss(Loss):
         X is the output from fully connected layer (num_examples x num_classes)
         y is labels (num_examples x 1): one hot encode vector
         """
-        Y = Y.T
         m = Y.shape[-1]
-        log_likelihood = -np.log(Y_pred[Y-1, range(m)])
+        log_likelihood = -np.log(Y_pred[Y, range(m)])
         loss = np.sum(log_likelihood) / m
         return loss
 
@@ -41,7 +39,7 @@ class CrossEntropyLoss(Loss):
         """
         Y = Y.T
         m = Y.shape[-1]
-        Y_pred[Y-1, range(m)] -= 1
+        Y_pred[Y, range(m)] = 1
         Y_pred = Y_pred / m
         return Y_pred
 

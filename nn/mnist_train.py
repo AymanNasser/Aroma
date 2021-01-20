@@ -1,15 +1,10 @@
-import sys
-import os
 from tqdm import tqdm
 
-sys.path.insert(1, str(os.getcwd()) )
-sys.path.insert(1, str(os.getcwd()) + '/utils')
-
 from utils.data import DataLoader
-from model import Model
-from activations import *
-from layers import *
-from losses import *
+from nn.model import Model
+from nn.activations import *
+from nn.layers import *
+from nn.losses import *
 
 
 data_loader = DataLoader(batch_size=64)
@@ -28,3 +23,4 @@ for i in range(epoch):
         loss = model.compute_cost(Y, y_pred)
         model.backward()
         model.step()
+    print("Epoch: ", i + 1, "Loss: ", loss)
