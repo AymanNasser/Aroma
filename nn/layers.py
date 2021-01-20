@@ -14,6 +14,7 @@ class Layer:
         self.model_name = None
         self.params = None
         self.layer_num = None
+        self.has_weights = None
 
     def init_weights(self, *args, **kwargs):
         """
@@ -38,7 +39,7 @@ class Layer:
     def set_layer_attributes(self, layer_num, model_name):
         self.layer_num = layer_num
         self.model_name = model_name
-        self.params = Parameters.get_model(self.model_name)
+        self.params = Parameters.get_model(self.model_name) # Need to be set if only the layer has parameters
 
 
 class Linear(Layer):
@@ -110,14 +111,27 @@ class Linear(Layer):
 
 class BatchNorm2D(Layer):
     """
-    Batch normalization layer
+    Batch normalization applies a transformation that maintains 
+    the mean output close to 0 and the output standard deviation close to 1
     """
-    def __init__(self, num_features, epsilon=1e-05):
-        super(self).__init__()
+    def __init__(self, num_features, epsilon=1e-05, axis=2, affine=True):
+        super().__init__()
+        """
+        Parameters:
+            num_features: C from an expected input of size (W,H,C,M)
+            affine – a boolean value that when set to True, this module has learnable affine parameters. Default: True
+            epsilon – a value added to the denominator for numerical stability. Default: 1e-5
+            axis = an int, the axis that should be normalized (typically the features axis)
+        """
         self.channels = num_features
         self.epsilon = epsilon
+        self.axis = axis
+        self.affine = affine
 
-    def forward(self):
+    def init_weights(self):
+        pass
+
+    def forward(self, X):
         pass
 
     def backward(self):
