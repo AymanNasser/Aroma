@@ -1,4 +1,5 @@
 import numpy as np
+import numpy as np
 
 class Evaluation:
     def __init__(self, Y_true, Y_pred, average='macro'):
@@ -87,4 +88,3 @@ class Evaluation:
             raise AttributeError("Wrong averaging attribute")
 
         return f1_score
-        
