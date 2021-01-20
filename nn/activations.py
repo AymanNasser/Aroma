@@ -6,9 +6,7 @@ class Activation:
     """
     def __init__(self, *args, **kwargs):
         self.layer_num = None
-
-    def set_layer_number(self, layer_num):
-        self.layer_num = layer_num
+        self.has_weights = False
 
     def forward(self, *args, **kwargs):
         """
@@ -32,6 +30,8 @@ class Activation:
         """
         raise NotImplementedError
 
+    def set_layer_attributes(self, layer_num):
+        self.layer_num = layer_num
 
 
 class Sigmoid(Activation):

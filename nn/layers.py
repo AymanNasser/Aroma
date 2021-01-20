@@ -48,9 +48,9 @@ class Linear(Layer):
         self.init_type = init_type
         self.in_dim = in_dim
         self.out_dim = out_dim
+        self.has_weights = True
 
     def init_weights(self):
-
         if self.init_type == 'random':
             self.params.initiate_random(self.in_dim, self.out_dim, self.layer_num)
         elif self.init_type == 'zero':
@@ -120,9 +120,12 @@ class Conv2D(Layer):
         self.stride = stride
         self.kernel_size = kernel_size
         self.padding = padding
-        #self._init_weights(in_channels, out_channels, self.kernel_size)
+        self.has_weights = True
         # todo initialize weights with size (kernel_size,kernel_size,in_channels,out_channels)
 
+    def init_weights(self):
+        pass
+    
     def conv_single_step(self, a_slice_prev, W, b):
         """
         Apply one filter defined by parameters W on a single slice (a_slice_prev) of the output activation
@@ -137,14 +140,13 @@ class Conv2D(Layer):
         Z -- a scalar value, result of convolving the sliding window (W, b) on a slice x of the input data
         """
 
-        ### START CODE HERE ### (≈ 2 lines of code)
         # Element-wise product between a_slice and W. Do not add the bias yet.
         s = np.multiply(a_slice_prev, W)
         # Sum over all entries of the volume s.
         Z = np.sum(s)
         # Add bias b to Z. Cast b to a float() so that Z results in a scalar value.
         Z = Z + b.astype(float)
-        ### END CODE HERE ###
+
         return Z
 
     def forward(self, A_prev):
@@ -190,9 +192,8 @@ class Conv2D(Layer):
                         # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron. (≈1 line)
                         Z[h, w, c, i] = self.conv_single_step(a_slice_prev, W[:, :, :, c], b[:, :, :, c])
 
-            ### END CODE HERE ###
 
-            # Making sure your output shape is correct
+        # Making sure your output shape is correct
         assert (Z.shape == (n_H, n_W, self.out_channels, m))
         return Z
 
@@ -218,6 +219,7 @@ class BatchNorm2D(Layer):
         self.epsilon = epsilon
         self.axis = axis
         self.affine = affine
+        self.has_weights = True
 
     def init_weights(self):
         pass

@@ -19,20 +19,24 @@ class Model:
             assert isinstance(layer, Layer) or isinstance(layer, Activation)
 
         self.__loss = loss
-        self.__optim = optimizer
+        # self.__optim = optimizer
         self.__model_name = model_name
         self.__params = Parameters(self.__model_name)
 
         self.__layers = layers
         self.__layer_num = 0
         for layer in self.__layers:
-            if isinstance(layer, Layer):
+            if layer.has_weights is True:
                 self.__layer_num += 1
-                layer.set_layer_attributes(self.__layer_num,self.__model_name)
+                layer.set_layer_attributes(self.__layer_num, self.__model_name)
                 layer.init_weights()
-            elif isinstance(layer, Activation):
-                layer.set_layer_number(self.__layer_num)
 
+            elif layer.has_weights is False:
+                layer.set_layer_attributes(self.__layer_num)
+            
+            else:
+                pass
+            
         self.__back = Backward(self.__model_name, 0, self.__layer_num)
         self.__forward = Forward(self.__layers,self.__model_name)
 
