@@ -28,8 +28,7 @@ class CrossEntropyLoss(Loss):
         y is labels (num_examples x 1): one hot encode vector
         """
         m = Y.shape[-1]
-        correct_prop = Y_pred[Y,:]
-        log_likelihood = -np.log(correct_prop)
+        log_likelihood = -np.log(Y_pred[Y,range(m)])
         loss = np.sum(log_likelihood) / m
         return loss
 
@@ -38,10 +37,10 @@ class CrossEntropyLoss(Loss):
         X is the output from fully connected layer (num_examples x num_classes)
         y is labels (num_examples x 1): one hot encode vector
         """
-        grad  = np.copy(Y_pred)
         m = Y.shape[-1]
-        grad[Y, range(m)] = 1
-        grad = grad / m
+        grad  = np.zeros_like(Y_pred)
+        grad[Y, range(m)] = 1.0
+        grad = (Y_pred - grad)/float(m)
         return grad
 
 
