@@ -58,13 +58,14 @@ class ReLU(Activation):
 class Softmax(Activation):
     def forward(self, X):
         exp_x = np.exp(X)
-        out = exp_x/np.sum(exp_x)
+        out = exp_x/np.sum(exp_x,axis=0,keepdims=True)
+        # out = np.max(out,axis=0,keepdims=True)
         return out
 
     def get_grad(self, X):
         exp_x = np.exp(X)
-        sum = np.sum(exp_x)
-        grad = (exp_x*(sum - 1))/np.square(sum)
+        sum = np.sum(exp_x,axis=0,keepdims=True)
+        grad = (exp_x*sum - np.square(exp_x))/(np.square(sum))
         return grad
 
 

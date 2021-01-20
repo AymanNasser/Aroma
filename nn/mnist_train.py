@@ -20,7 +20,7 @@ epoch = 16
 for i in range(epoch):
     for X,Y in tqdm(batches):
         y_pred = model.forward(X)
-        loss = model.compute_cost(Y, y_pred)
+        loss = model.compute_cost(Y.T, y_pred)
         model.backward()
         model.step()
     print("Epoch: ", i + 1, "Loss: ", loss)
