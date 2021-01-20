@@ -63,8 +63,8 @@ class Softmax(Activation):
 
     def get_grad(self, X):
         S = self.forward(X)
-        S_vector = S.reshape(S.shape[0], 1)
-        S_matrix = np.tile(S_vector, S.shape[0])
+        S_vector = S.reshape(1, S.shape[-1])
+        S_matrix = np.tile(S_vector, S.shape[-1])
         S_dir = np.diag(S) - (S_matrix * np.transpose(S_matrix))
         return S_dir
 
