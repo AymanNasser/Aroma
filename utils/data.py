@@ -1,10 +1,10 @@
 import kaggle
 import zipfile
 import os
-import shutil
+from shutil import rmtree
 import pandas as pd
 import numpy as np
-import math
+from math import floor
 from transforms import Transform
 
 """ This Module is responsiple for 
@@ -76,7 +76,7 @@ class DataLoader:
     def delete_dataset(self, dataset_name):
         """Removes the downloaded data"""
         if os.path.exists(dataset_name):
-            shutil.rmtree(self.dataset_name)
+            rmtree(self.dataset_name)
         else:
             raise NameError("This dataset doesn't exits")
 
@@ -115,7 +115,7 @@ class DataLoader:
         
         m = X.shape[-1]
         mini_batches = []
-        num_mini_batches= math.floor(m / self.batch_size)
+        num_mini_batches= floor(m / self.batch_size)
         
         # 2D Tensor
         if len(X.shape) == 2:
