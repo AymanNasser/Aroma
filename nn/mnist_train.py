@@ -12,9 +12,8 @@ X_train, y_train = data_loader.get_train_data()
 
 y_train = y_train.reshape(y_train.shape[0],1)
 batches = data_loader.get_batched_data(X_train, y_train)
-y_train = y_train.T
 
-model = Model([Linear(X_train.shape[0],10),Sigmoid(),Linear(10,5),Sigmoid(),Linear(5,10),Softmax()],CrossEntropyLoss())
+model = Model([Linear(X_train.shape[0],10),Sigmoid(),Linear(10,10),Sigmoid()],CrossEntropyLoss())
 
 epoch = 16
 
