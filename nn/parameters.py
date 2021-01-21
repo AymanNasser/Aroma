@@ -103,16 +103,26 @@ class Parameters:
         self.__add_weights(W,b,layer_num)
 
     def initiate_zeros_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
-        self.__parameters_num += f1*f2*n_C_prev * (n_C+1)
+        self.__parameters_num += (f1*f2*n_C_prev+1) * (n_C)
         W = np.zeros((f1, f2, n_C_prev, n_C))
         b = np.zeros((1,1,1,n_C))
         self.__add_weights(W,b,layer_num)
 
-    def initiate_random_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
-        self.__parameters_num += f1*f2*n_C_prev * (n_C+1)
+    def initiate_random_conv2(self, f1, f2, n_C_prev, n_C,layer_num):
+        self.__parameters_num += (f1*f2*n_C_prev+1) * (n_C)
         W = np.random.randn(f1, f2, n_C_prev, n_C)
         b = np.zeros((1,1,1,n_C))
         self.__add_weights(W,b,layer_num)
+
+    def initiate_batchnorm_params(self, n_channels, layer_num):
+        self.__parameters_num += 4*n_channels
+        gamma = np.ones((1,1,n_channels,1))
+        beta = np.zeros((1,1,n_channels,1))
+        # @Todo: Save gamma & beta to parameter module  
+
+    def get_batchnorm_params(self, layer_num):
+        # @Todo: Retrieve batchnorm params
+        pass
 
     def initiate_xavier_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
         self.__parameters_num += f1*f2*n_C_prev * (n_C+1)

@@ -370,8 +370,9 @@ class BatchNorm2D(Layer):
     """
     Batch normalization applies a transformation that maintains 
     the mean output close to 0 and the output standard deviation close to 1
+    
     """
-    def __init__(self, num_features, epsilon=1e-05, axis=2, affine=True):
+    def __init__(self, num_features, epsilon=1e-08):
         super().__init__()
         """
         Parameters:
@@ -382,18 +383,80 @@ class BatchNorm2D(Layer):
         """
         self.channels = num_features
         self.epsilon = epsilon
-        self.axis = axis
-        self.affine = affine
         self.has_weights = True
 
     def init_weights(self):
-        pass
+        self.params.initiate_batchnorm_params(self.channels, self.layer_num)       
+
 
     def forward(self, X):
-        pass
+        """
+            Forward pass for the 2D batchnorm layer.
+            Args:
+                X: numpy.ndarray of shape (height, width, n_channels, n_batch).
+            Returns_
+                Y: numpy.ndarray of shape (height, width, n_channels, n_batch).
+                    Batch-normalized tensor of X.
+        """ 
+        # Prev. layer is Dense
+        if len(X.shape) == 2:
+            raise NotImplementedError("Didn't implement batchnorm for dense layers")
+            
+        
+        # Prev. layer is cnn or maxpool
+        elif len(X.shape) == 4:
+            gamma, beta = self.params.get_batchnorm_params(self.layer_num)
 
-    def backward(self):
-        pass
+            H,W,C,M = X.shape
+            self.X_shape = X.shape  
+
+            # Flattening X
+            self.flat_X = X.reshape(-1,M)
+            # Mean
+            self.mu = np.mean(self.flat_X, axis=1, keepdims=True)
+            # Variance
+            self.var = np.var(self.flat_X, axis=1, keepdims=True) 
+            # Normalize
+            self.X_hat = (self.flat_X - self.mu) / np.sqrt(self.var + self.epsilon)
+            out = gamma * self.X_hat + beta
+
+            return out.reshape(self.X_shape)
+        
+        else:
+            raise AttributeError("Wrong tensor dim")
+        
+
+    def backward(self, dout):
+        """
+            Backward pass for the 2D batchnorm layer. Calculates global gradients
+            for the input and the parameters.
+            Args:
+                dZ_hat: numpy.ndarray of shape (height, width, n_channels, n_batch).
+            Returns:
+                dX: numpy.ndarray of shape (height, width, n_channels, n_batch).
+                    Global gradient wrt the input X.
+        """
+        gamma, beta = self.params.get_batchnorm_params(self.layer_num)
+
+        dout = dout.reshape(-1, dout.shape[-1])
+        X_mu = self.flat_X - self.mu
+        var_invr = 1. / np.sqrt(self.var + 1e-8)
+
+        dBeta = np.sum(dout, axis=1)
+        dGamma = np.sum(dout * self.X_hat, axis=1)
+
+        dX_norm = dout * gamma
+
+        dVar = np.sum(dX_norm * X_mu, axis=1) * (-0.5) * (self.var + 1e-8)**(-3 / 2)
+
+        dMu = np.sum(dX_norm * -var_invr, axis=0) + dVar * (1 / self.X_shape[-1]) * np.sum(-2. * X_mu, axis=1)
+
+        dX = (dX_norm * var_invr) + (dMu / self.X_shape[-1]) + (dVar * 2 / self.X_shape[-1] * X_mu)
+
+        dX = dX.reshape(self.X_shape)
+        return dX
+        
+
 
     def calc_grad(self):
         pass
