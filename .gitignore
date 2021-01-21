@@ -1,5 +1,6 @@
 framework/dataset/*
 
 **/.vscode/
-**/.idea/
-**/__pycache__/
+__pycache__/
+*.pyc
+.idea/
