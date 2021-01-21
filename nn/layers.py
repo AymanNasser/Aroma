@@ -215,7 +215,6 @@ class MaxPool2D(Layer):
     """
     Max Pooling layer
     """
-
     def __init__(self,kernel_size=(2,2), stride=(2,2), padding=(0,0)):
         super().__init__()
         if isinstance(kernel_size,tuple):
@@ -352,6 +351,20 @@ class AvgPool2D(Layer):
                 dA_prev[h_offset:h_offset + KH, w_offset:w_offset + KW, :, :] = average
 
         return dA_prev
+
+class Flatten(Layer):
+    def __init__(self):
+        super().__init__()
+        self.has_weights = False
+    
+    def forward(self, X):
+        m = X.shape[-1]
+        return X.reshape(-1, m)
+    
+    def backward(self, dZ, A):
+        return dZ.reshape(A.shape)
+
+
 
 class BatchNorm2D(Layer):
     """
