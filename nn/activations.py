@@ -71,14 +71,19 @@ class Softmax(Activation):
 
 class LeakyRelU(Activation):
     def __init__(self, negative_slope=0.01):
+        super().__init__()
         self.neg_slope = negative_slope
 
     def forward(self, X):
-        return X * (X > 0) + (X * self.neg_slope) * (X <= 0)
+        debug = X * (X >= 0) + (X * self.neg_slope) * (X < 0)
+        return debug
 
     def get_grad(self, X):
-        l_relu_grad = 1 if X >= 0 else self.neg_slope
-        return l_relu_grad
+        grad = np.copy(X)
+        grad[X>=0] = 1
+        grad[X<0] = self.neg_slope
+        #l_relu_grad = np.ones_like(X) if X >= 0 else np.full_like(X,self.neg_slope)
+        return grad
 
 
 
