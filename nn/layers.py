@@ -211,6 +211,85 @@ class Conv2D(Layer):
         pass
 
 
+class MaxPool2D(Layer):
+    """
+    Max Pooling layer
+    """
+
+    def __init__(self,kernel_size=(2,2), stride=(2,2), padding=(0,0)):
+        super().__init__()
+        if isinstance(kernel_size,tuple):
+            self.__kernel_size = kernel_size
+        elif isinstance(kernel_size,int):
+            self.__kernel_size = (kernel_size,kernel_size)
+        else:
+            raise AttributeError("Pleas specify tuple or int kernel size")
+
+        if isinstance(stride,tuple):
+            self.__stride = stride
+        elif isinstance(stride,int):
+            self.__stride = (stride,stride)
+        else:
+            raise AttributeError("Pleas specify tuple or int stride")
+
+        if isinstance(padding,tuple):
+            self.__padding = padding
+        elif isinstance(padding,int):
+            self.__padding = (padding,padding)
+        else:
+            raise AttributeError("Pleas specify tuple or int padding")
+
+        self.has_weights = True
+
+    def padding(self,X):
+        pad_list = [(self.__padding[0],),(self.__padding[1],),(0,),(0,)]
+        return np.pad(X,pad_list,'constant')
+
+    def forward(self, A_prev):
+        A_prev_pad = self.padding(A_prev)
+        KH, KW = self.__kernel_size
+        SH, SW = self.__stride
+        PH, PW = self.__padding
+        H, W, C, N = A_prev.shape
+        A = np.zeros(((H-KH+SH+2*PH)//SH, (W-KW+SW+2*PW)//SW, C, N))
+        H_out, W_out, _, _ = A.shape
+
+        for row in range(H_out):
+            h_offset = row*self.__stride[0]
+            for col in range(W_out):
+                w_offset = col*self.__stride[1]
+                rect_field = A_prev_pad[h_offset:h_offset+self.__kernel_size[0],w_offset:w_offset+self.__kernel_size[1],:,:]
+                A[row, col, :, :] = np.max(rect_field, axis=(0,1))
+
+        return A
+
+    def backward(self):
+        pass
+
+max = MaxPool2D()
+A = np.random.randn(7,7,3,1)
+x = max.forward(A)
+print(x.shape)
+
+class AvgPool2D(Layer):
+    """
+    Max Pooling layer
+    """
+
+    def __init__(self,kernel_size=3, stride=1, padding=0):
+        super().__init__()
+        self.stride = stride
+        self.kernel_size = kernel_size
+        self.padding = padding
+        self.has_weights = True
+
+
+    def forward(self, A_prev):
+        pass
+
+    def backward(self):
+        pass
+
 class BatchNorm2D(Layer):
     """
     Batch normalization applies a transformation that maintains 
