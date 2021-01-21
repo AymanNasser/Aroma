@@ -102,6 +102,24 @@ class Parameters:
         b = np.zeros((out_dim, 1))
         self.__add_weights(W,b,layer_num)
 
+    def initiate_zeros_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
+        self.__parameters_num += f1*f2*n_C_prev * (n_C+1)
+        W = np.zeros((f1, f2, n_C_prev, n_C))
+        b = np.zeros((1,1,1,n_C))
+        self.__add_weights(W,b,layer_num)
+
+    def initiate_random_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
+        self.__parameters_num += f1*f2*n_C_prev * (n_C+1)
+        W = np.random.randn(f1, f2, n_C_prev, n_C)
+        b = np.zeros((1,1,1,n_C))
+        self.__add_weights(W,b,layer_num)
+
+    def initiate_xavier_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
+        self.__parameters_num += f1*f2*n_C_prev * (n_C+1)
+        W = np.sqrt(1 / n_C_prev) * np.random.randn(f1, f2, n_C_prev, n_C)
+        b = np.zeros((1,1,1,n_C))
+        self.__add_weights(W,b,layer_num)
+
     def get_layer_parameters(self,layer_num):
         layer_name = "Layer " + str(layer_num)
         self.__is_layer_exist(layer_name)

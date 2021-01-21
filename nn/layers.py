@@ -113,15 +113,25 @@ class Conv2D(Layer):
     """
     Convoloution layer
     """
-    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=0):
+    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=0,init_type='random'):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.stride = stride
         self.kernel_size = kernel_size
         self.padding = padding
+        self.init_type = init_type
         self.has_weights = True
-        # todo initialize weights with size (kernel_size,kernel_size,in_channels,out_channels)
+
+    def init_weights(self):
+        if self.init_type == 'random':
+            self.params.initiate_random_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+        elif self.init_type == 'zero':
+            self.params.initiate_zeros_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+        elif self.init_type == 'xavier':
+            self.params.initiate_xavier_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+        else:
+            raise AttributeError("Non Supported Type of Initialization")
 
     def init_weights(self):
         pass
