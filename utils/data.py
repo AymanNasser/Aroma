@@ -51,10 +51,11 @@ class DataLoader:
                                          self.transform.to_tensor(X_val), \
                                          self.transform.to_tensor(y_val)
         
-        self.X_train = X_train
-        self.y_train = y_train
-        self.X_val = X_val
-        self.y_val = y_val
+        
+        self.X_train = X_train.reshape(-1, X_train.shape[0])
+        self.y_train = y_train.reshape(1, y_train.shape[0])
+        self.X_val = X_val.reshape(-1, X_val.shape[0])
+        self.y_val = y_val.reshape(1, y_val.shape[0])
 
         self.X_test = self.transform.to_tensor(test_data)
 
