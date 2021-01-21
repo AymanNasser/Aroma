@@ -113,15 +113,25 @@ class Conv2D(Layer):
     """
     Convoloution layer
     """
-    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=0):
+    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=0,init_type='random'):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.stride = stride
         self.kernel_size = kernel_size
         self.padding = padding
+        self.init_type = init_type
         self.has_weights = True
-        # todo initialize weights with size (kernel_size,kernel_size,in_channels,out_channels)
+
+    def init_weights(self):
+        if self.init_type == 'random':
+            self.params.initiate_random_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+        elif self.init_type == 'zero':
+            self.params.initiate_zeros_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+        elif self.init_type == 'xavier':
+            self.params.initiate_xavier_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+        else:
+            raise AttributeError("Non Supported Type of Initialization")
 
     def init_weights(self):
         pass
@@ -200,6 +210,148 @@ class Conv2D(Layer):
     def backward(self, *args, **kwargs):
         pass
 
+
+class MaxPool2D(Layer):
+    """
+    Max Pooling layer
+    """
+
+    def __init__(self,kernel_size=(2,2), stride=(2,2), padding=(0,0)):
+        super().__init__()
+        if isinstance(kernel_size,tuple):
+            self.__kernel_size = kernel_size
+        elif isinstance(kernel_size,int):
+            self.__kernel_size = (kernel_size,kernel_size)
+        else:
+            raise AttributeError("Pleas specify tuple or int kernel size")
+
+        if isinstance(stride,tuple):
+            self.__stride = stride
+        elif isinstance(stride,int):
+            self.__stride = (stride,stride)
+        else:
+            raise AttributeError("Pleas specify tuple or int stride")
+
+        if isinstance(padding,tuple):
+            self.__padding = padding
+        elif isinstance(padding,int):
+            self.__padding = (padding,padding)
+        else:
+            raise AttributeError("Pleas specify tuple or int padding")
+
+        self.has_weights = False
+
+    def padding(self,X):
+        pad_list = [(self.__padding[0],),(self.__padding[1],),(0,),(0,)]
+        return np.pad(X,pad_list,'constant')
+
+    def forward(self, A_prev):
+        A_prev_pad = self.padding(A_prev)
+        KH, KW = self.__kernel_size
+        SH, SW = self.__stride
+        PH, PW = self.__padding
+        H, W, C, N = A_prev.shape
+        A = np.zeros(((H-KH+SH+2*PH)//SH, (W-KW+SW+2*PW)//SW, C, N))
+        H_out, W_out, _, _ = A.shape
+
+        for row in range(H_out):
+            h_offset = row*SH
+            for col in range(W_out):
+                w_offset = col*SW
+                rect_field = A_prev_pad[h_offset:h_offset+KH,
+                             w_offset:w_offset+KW,:,:]
+                A[row, col, :, :] = np.max(rect_field, axis=(0,1))
+
+        return A
+
+    def backward(self, dA, A_prev):
+        KH, KW = self.__kernel_size
+        SH, SW = self.__stride
+        H_prev, W_perv, C_prev, N_prev = A_prev.shape
+        dA_prev = np.zeros((H_prev, W_perv, C_prev, N_prev))
+        H, W, _, _ = dA.shape
+
+        for row in range(H):
+            h_offset = row * SH
+            for col in range(W):
+                w_offset = col * SW
+                rect_field = A_prev[h_offset:h_offset + KH,
+                             w_offset:w_offset + KW, :, :]
+                mask = rect_field == np.max(rect_field, axis=(0, 1))
+                dA_prev[h_offset:h_offset+KH, w_offset:w_offset+KW, :, :] = mask * dA[row, col, :, :]
+
+        return dA_prev
+
+class AvgPool2D(Layer):
+    """
+    Average Pooling layer
+    """
+
+    def __init__(self, kernel_size=(2, 2), stride=(2, 2), padding=(0, 0)):
+        super().__init__()
+        if isinstance(kernel_size, tuple):
+            self.__kernel_size = kernel_size
+        elif isinstance(kernel_size, int):
+            self.__kernel_size = (kernel_size, kernel_size)
+        else:
+            raise AttributeError("Pleas specify tuple or int kernel size")
+
+        if isinstance(stride, tuple):
+            self.__stride = stride
+        elif isinstance(stride, int):
+            self.__stride = (stride, stride)
+        else:
+            raise AttributeError("Pleas specify tuple or int stride")
+
+        if isinstance(padding, tuple):
+            self.__padding = padding
+        elif isinstance(padding, int):
+            self.__padding = (padding, padding)
+        else:
+            raise AttributeError("Pleas specify tuple or int padding")
+
+        self.has_weights = False
+
+    def padding(self, X):
+        pad_list = [(self.__padding[0],), (self.__padding[1],), (0,), (0,)]
+        return np.pad(X, pad_list, 'constant')
+
+    def forward(self, A_prev):
+        A_prev_pad = self.padding(A_prev)
+        KH, KW = self.__kernel_size
+        SH, SW = self.__stride
+        PH, PW = self.__padding
+        H, W, C, N = A_prev.shape
+        A = np.zeros(((H - KH + SH + 2 * PH) // SH, (W - KW + SW + 2 * PW) // SW, C, N))
+        H_out, W_out, _, _ = A.shape
+
+        for row in range(H_out):
+            h_offset = row*SH
+            for col in range(W_out):
+                w_offset = col*SW
+                rect_field = A_prev_pad[h_offset:h_offset+KH,
+                             w_offset:w_offset+KW,:,:]
+                A[row, col, :, :] = np.average(rect_field, axis=(0, 1))
+
+        return A
+
+    def backward(self, dA, A_prev):
+        KH, KW = self.__kernel_size
+        SH, SW = self.__stride
+        H_prev, W_perv, C_prev, N_prev = A_prev.shape
+        dA_prev = np.zeros((H_prev, W_perv, C_prev, N_prev))
+        H, W, _, _ = dA.shape
+
+        for row in range(H):
+            h_offset = row * SH
+            for col in range(W):
+                w_offset = col * SW
+                rect_field = A_prev[h_offset:h_offset + KH,
+                             w_offset:w_offset + KW, :, :]
+                average = rect_field / (KH*KW)
+                dA_prev[h_offset:h_offset + KH, w_offset:w_offset + KW, :, :] = average
+
+        return dA_prev
 
 class BatchNorm2D(Layer):
     """
