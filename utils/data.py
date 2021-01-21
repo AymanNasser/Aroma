@@ -58,6 +58,7 @@ class DataLoader:
         self.y_val = y_val.reshape(1, y_val.shape[0])
 
         self.X_test = self.transform.to_tensor(test_data)
+        self.X_test = self.X_test.reshape(-1, self.X_test.shape[0])
 
     def __download_dataset(self, dataset_name):
         """takes a dataset name and download it from **kaggle**, unzip it and remove the zip file"""
@@ -110,38 +111,92 @@ class DataLoader:
         return X_train, y_train, X_val, y_val
     
     def __partition(self, X, Y):
-        m = X.shape[0]
+        assert len(X.shape) == 2 or len(X.shape) == 4, "Unsupported tensor shape for batching"
+        
+        m = X.shape[-1]
         mini_batches = []
         num_mini_batches= math.floor(m / self.batch_size)
         
-        for i in range(0, num_mini_batches):
-            mini_batch_X = X[i*self.batch_size:(i+1)*self.batch_size , :]
-            mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
+        # 2D Tensor
+        if len(X.shape) == 2:
+            for i in range(0, num_mini_batches):
+                mini_batch_X = X[:, i*self.batch_size:(i+1)*self.batch_size]
+                mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
 
-            mini_batch = (mini_batch_X, mini_batch_Y)
-            mini_batches.append(mini_batch)
+                mini_batch = (mini_batch_X, mini_batch_Y)
+                mini_batches.append(mini_batch)
 
-        # Handling the end case (last mini-batch < mini_batch_size)
-        if m % self.batch_size != 0:
-            mini_batch_X = X[self.batch_size*num_mini_batches:, :]
-            mini_batch_Y = Y[self.batch_size*num_mini_batches:]
+            # Handling the end case (last mini-batch < mini_batch_size)
+            if m % self.batch_size != 0:
+                mini_batch_X = X[:, self.batch_size*num_mini_batches:]
+                mini_batch_Y = Y[self.batch_size*num_mini_batches:]
 
-            mini_batch = (mini_batch_X, mini_batch_Y)
-            mini_batches.append(mini_batch)
+                mini_batch = (mini_batch_X, mini_batch_Y)
+                mini_batches.append(mini_batch)
+
+        # 4D Tensor
+        elif len(X.shape) == 4:
+            for i in range(0, num_mini_batches):
+                mini_batch_X = X[:, :, :, i*self.batch_size:(i+1)*self.batch_size]
+                mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
+
+                mini_batch = (mini_batch_X, mini_batch_Y)
+                mini_batches.append(mini_batch)
+
+            # Handling the end case (last mini-batch < mini_batch_size)
+            if m % self.batch_size != 0:
+                mini_batch_X = X[:, :, :, self.batch_size*num_mini_batches:]
+                mini_batch_Y = Y[self.batch_size*num_mini_batches:]
+
+                mini_batch = (mini_batch_X, mini_batch_Y)
+                mini_batches.append(mini_batch)
+
+        else:
+            pass
 
         return mini_batches
 
-    def get_train_data(self):
+    def get_train_data(self, tensor_shape='2D', H=None, W=None, C=None):
         """returns train dataset as array and the train label as a vector"""
-        return self.X_train, self.y_train
+        if tensor_shape == '2D':
+            return self.X_train, self.y_train
 
-    def get_validation_data(self):
+        elif tensor_shape == '4D':
+            assert H is not None or W is not None or C is not None
+            M = self.X_train.shape[-1]
+            X_train = self.X_train.reshape(H, W, C, M)
+            return X_train, self.y_train
+
+        else:
+            raise AttributeError("Wrong tensor shape, select either 2D or 4D")
+
+    def get_validation_data(self, tensor_shape='2D', H=None, W=None, C=None):
         """returns validation dataset as array and the validation label as a vector"""
-        return self.X_val, self.y_val
+        if tensor_shape == '2D':
+            return self.X_val, self.y_val
 
-    def get_test_data(self):
+        elif tensor_shape == '4D':
+            assert H is not None or W is not None or C is not None
+            M = self.X_val.shape[-1]
+            X_val = self.X_val.reshape(H, W, C, M)
+            return X_val, self.y_train
+
+        else:
+            raise AttributeError("Wrong tensor shape, select either 2D or 4D")
+
+    def get_test_data(self, tensor_shape='2D', H=None, W=None, C=None):
         """returns test dataset as array"""
-        return self.X_test
+        if tensor_shape == '2D':
+            return self.X_test  
+
+        elif tensor_shape == '4D':
+            assert H is not None or W is not None or C is not None
+            M = self.X_test.shape[-1]
+            X_test = self.X_test.reshape(H, W, C, M)
+            return X_test
+
+        else:
+            raise AttributeError("Wrong tensor shape, select either 2D or 4D")
     
     def get_train_sample(self, index):
         """returns the row with the specific index"""
