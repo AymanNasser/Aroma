@@ -277,7 +277,7 @@ class MaxPool2D(Layer):
                 w_offset = col * SW
                 rect_field = A_prev[h_offset:h_offset + KH,
                              w_offset:w_offset + KW, :, :]
-                mask = rect_field == np.max(rect_field, axis=(2, 3))
+                mask = rect_field == np.max(rect_field, axis=(0, 1))
                 dA_prev[h_offset:h_offset+KH, w_offset:w_offset+KW, :, :] = mask * dA[row, col, :, :]
 
         return dA_prev
@@ -348,15 +348,10 @@ class AvgPool2D(Layer):
                 w_offset = col * SW
                 rect_field = A_prev[h_offset:h_offset + KH,
                              w_offset:w_offset + KW, :, :]
-                mask = np.average(rect_field, axis=(2, 3))
-                dA_prev[h_offset:h_offset + KH, w_offset:w_offset + KW, :, :] = mask * dA[row, col, :, :]
+                average = rect_field / (KH*KW)
+                dA_prev[h_offset:h_offset + KH, w_offset:w_offset + KW, :, :] = average
 
         return dA_prev
-
-max = AvgPool2D()
-A = np.random.randn(7,7,3,1)
-x = max.forward(A)
-print(x.shape)
 
 class BatchNorm2D(Layer):
     """
