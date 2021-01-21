@@ -36,10 +36,12 @@ class Layer:
         """
         raise NotImplementedError
 
-    def set_layer_attributes(self, layer_num, model_name):
-        self.layer_num = layer_num
-        self.model_name = model_name
-        self.params = Parameters.get_model(self.model_name) # Need to be set if only the layer has parameters
+    def set_layer_attributes(self, *args):
+
+        self.layer_num = args[0]
+        if len(args) > 1:
+            self.model_name = args[1]
+            self.params = Parameters.get_model(self.model_name) # Need to be set if only the layer has parameters
 
 
 class Linear(Layer):
@@ -122,6 +124,8 @@ class Conv2D(Layer):
         self.padding = padding
         self.init_type = init_type
         self.has_weights = True
+        #par = Parameters("model_name")
+        #self.params = Parameters.get_model("model_name")
 
     def init_weights(self):
         if self.init_type == 'random':
@@ -132,9 +136,6 @@ class Conv2D(Layer):
             self.params.initiate_xavier_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
         else:
             raise AttributeError("Non Supported Type of Initialization")
-
-    def init_weights(self):
-        pass
     
     def conv_single_step(self, a_slice_prev, W, b):
         """
@@ -460,3 +461,11 @@ class BatchNorm2D(Layer):
 
     def calc_grad(self):
         pass
+
+# # pool =
+# layer1 = Conv2D(1,4,3,1,0,'random')
+# layer1.init_weights()
+# input = np.random.rand(28,28,1,100)
+# debug = layer1.forward(input)
+# #print(debug)
+# print(debug.shape)
