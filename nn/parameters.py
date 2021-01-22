@@ -77,58 +77,61 @@ class Parameters:
         if layer_name not in self.__parameters.keys():
             raise AttributeError(layer_name + " doesn't exist")
 
-    def __add_weights(self,W,b,layer_num):
+    def __add_weights(self,Paramaeter_1,Paramaeter_2,Paramaeter_1_name,Paramaeter_2_name,layer_num):
         layer_name = "Layer " + str(layer_num)
-        self.__parameters[layer_name] = {'W': W,'b': b}
+        self.__parameters[layer_name] = {Paramaeter_1_name: Paramaeter_1,Paramaeter_2_name: Paramaeter_2}
 
     def initiate_zeros(self,in_dim,out_dim,layer_num):
         self.__check_attributes(layer_num,in_dim)
         self.__parameters_num += out_dim * (in_dim+1)
         W = np.zeros((out_dim,in_dim))
         b = np.zeros((out_dim,1))
-        self.__add_weights(W,b,layer_num)
+        self.__add_weights(W,b,'W','b',layer_num)
 
     def initiate_random(self,in_dim,out_dim,layer_num):
         self.__check_attributes(layer_num,in_dim)
         self.__parameters_num += out_dim * (in_dim + 1)
         W = np.random.randn(out_dim,in_dim)
         b = np.zeros((out_dim,1))
-        self.__add_weights(W,b,layer_num)
+        self.__add_weights(W,b,'W','b',layer_num)
 
     def initiate_xavier(self,in_dim,out_dim,layer_num):
         self.__check_attributes(layer_num,in_dim)
         self.__parameters_num += out_dim * (in_dim + 1)
         W = np.sqrt(1 / in_dim) * np.random.randn(out_dim, in_dim) 
         b = np.zeros((out_dim, 1))
-        self.__add_weights(W,b,layer_num)
+        self.__add_weights(W,b,'W','b',layer_num)
 
     def initiate_zeros_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
         self.__parameters_num += (f1*f2*n_C_prev+1) * (n_C)
         W = np.zeros((f1, f2, n_C_prev, n_C))
         b = np.zeros((1,1,1,n_C))
-        self.__add_weights(W,b,layer_num)
+        self.__add_weights(W,b,'W','b',layer_num)
 
     def initiate_random_conv2(self, f1, f2, n_C_prev, n_C,layer_num):
         self.__parameters_num += (f1*f2*n_C_prev+1) * (n_C)
         W = np.random.randn(f1, f2, n_C_prev, n_C)
         b = np.zeros((1,1,1,n_C))
-        self.__add_weights(W,b,layer_num)
+        self.__add_weights(W,b,'W','b',layer_num)
+
+    def initiate_xavier_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
+        self.__parameters_num += (f1*f2*n_C_prev+1) * (n_C)
+        W = np.sqrt(1 / n_C_prev) * np.random.randn(f1, f2, n_C_prev, n_C)
+        b = np.zeros((1,1,1,n_C))
+        self.__add_weights(W,b,'W','b',layer_num)
 
     def initiate_batchnorm_params(self, n_channels, layer_num):
         self.__parameters_num += 4*n_channels
         gamma = np.ones((1,1,n_channels,1))
         beta = np.zeros((1,1,n_channels,1))
-        # @Todo: Save gamma & beta to parameter module  
+        self.__add_weights(gamma,beta,'gamma','beta',layer_num)
 
     def get_batchnorm_params(self, layer_num):
-        # @Todo: Retrieve batchnorm params
-        pass
-
-    def initiate_xavier_conv2(self,f1, f2, n_C_prev, n_C,layer_num):
-        self.__parameters_num += f1*f2*n_C_prev * (n_C+1)
-        W = np.sqrt(1 / n_C_prev) * np.random.randn(f1, f2, n_C_prev, n_C)
-        b = np.zeros((1,1,1,n_C))
-        self.__add_weights(W,b,layer_num)
+        layer_name = "Layer " + str(layer_num)
+        self.__is_layer_exist(layer_name)
+        gamma = self.__parameters[layer_name]['gamma']
+        beta = self.__parameters[layer_name]['beta']
+        return gamma, beta
 
     def get_layer_parameters(self,layer_num):
         layer_name = "Layer " + str(layer_num)
@@ -150,7 +153,7 @@ class Parameters:
     def update_layer_parameters(self,layer_num,W,b):
         layer_name = "Layer " + str(layer_num)
         self.__is_layer_exist(layer_name)
-        self.__add_weights(W,b,layer_num)
+        self.__add_weights(W,b,'W','b',layer_num)
 
     def get_layer_dim(self,layer_num):
         layer_name = "Layer " + str(layer_num)
