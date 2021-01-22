@@ -4,3 +4,4 @@ framework/dataset/*
 __pycache__/
 *.pyc
 .idea/
+nn/digit-recognizer
