@@ -17,4 +17,4 @@ print(X_train.shape, y_train.shape)
 print(X_val.shape, y_val.shape)
 print(X_test.shape)
 
-print(dataset[0][0].shape)
+print(dataset[0][0].shape, dataset[0][1].shape)

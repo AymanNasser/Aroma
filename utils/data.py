@@ -138,7 +138,7 @@ class DataLoader:
         elif len(X.shape) == 4:
             for i in range(0, num_mini_batches):
                 mini_batch_X = X[:, :, :, i*self.batch_size:(i+1)*self.batch_size]
-                mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
+                mini_batch_Y = Y[:, i*self.batch_size:(i+1)*self.batch_size]
 
                 mini_batch = (mini_batch_X, mini_batch_Y)
                 mini_batches.append(mini_batch)
@@ -146,7 +146,7 @@ class DataLoader:
             # Handling the end case (last mini-batch < mini_batch_size)
             if m % self.batch_size != 0:
                 mini_batch_X = X[:, :, :, self.batch_size*num_mini_batches:]
-                mini_batch_Y = Y[self.batch_size*num_mini_batches:]
+                mini_batch_Y = Y[:, self.batch_size*num_mini_batches:]
 
                 mini_batch = (mini_batch_X, mini_batch_Y)
                 mini_batches.append(mini_batch)
