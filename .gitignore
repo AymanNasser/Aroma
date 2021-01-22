@@ -2,6 +2,7 @@ framework/dataset/*
 
 **/.vscode/
 __pycache__/
+*/.ipynb_checkpoints/*.ipynb
 *.pyc
 .idea/
 nn/digit-recognizer
