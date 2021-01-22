@@ -3,14 +3,9 @@ import zipfile
 import os
 from shutil import rmtree
 import pandas as pd
-<<<<<<< HEAD
-import math
-from utils.transforms import Transform
-=======
 import numpy as np
 from math import floor
 from transforms import Transform
->>>>>>> main
 
 """ This Module is responsiple for 
 1- Downloading ** a Kaggle dataset** and loading it into the model,
@@ -56,16 +51,6 @@ class DataLoader:
                                          self.transform.to_tensor(X_val), \
                                          self.transform.to_tensor(y_val)
         
-<<<<<<< HEAD
-        self.X_train = X_train.reshape(X_train.shape[1], X_train.shape[0])
-        self.y_train = y_train
-        self.X_val = X_val.reshape(X_val.shape[1], X_val.shape[0])
-        self.y_val = y_val
-
-        self.X_test = self.transform.to_tensor(test_data)
-        self.X_test = self.X_test.reshape(self.X_test.shape[1], self.X_test.shape[0])
-
-=======
         
         self.X_train = X_train.reshape(-1, X_train.shape[0])
         self.y_train = y_train.reshape(1, y_train.shape[0])
@@ -74,7 +59,6 @@ class DataLoader:
 
         self.X_test = self.transform.to_tensor(test_data)
         self.X_test = self.X_test.reshape(-1, self.X_test.shape[0])
->>>>>>> main
 
     def __download_dataset(self, dataset_name):
         """takes a dataset name and download it from **kaggle**, unzip it and remove the zip file"""
@@ -99,14 +83,9 @@ class DataLoader:
     # Load data from .csv files
     def __load_data(self):
         try:
-<<<<<<< HEAD
-            df = pd.read_csv(self.dataset_path + '/' + self.dataset_name + '/train.csv')
-            df_test = pd.read_csv(self.dataset_path + '/' + self.dataset_name + '/test.csv')
-=======
             print(self.dataset_path + '/' + self.dataset_name +  '/train.csv')
             df = pd.read_csv(self.dataset_path + '/' + self.dataset_name +  '/train.csv')
             df_test = pd.read_csv(self.dataset_path + '/' + self.dataset_name +  '/test.csv')
->>>>>>> main
         except:
             raise OSError("Wrong referred paths for data loading")
 
@@ -119,17 +98,9 @@ class DataLoader:
             Split trainig data which into train and validation dataframes by a split ratio (default 0.2)
         """
         df = train_data
-<<<<<<< HEAD
-        
-    
-        df_train = df.sample(frac=1-split_ratio)
-        df_validation = df.drop(df_train.index)
-        
-=======
                 
         df_train = df.sample(frac=1-split_ratio)
         df_validation = df.drop(df_train.index)
->>>>>>> main
 
         X_train = df_train.iloc[:, 1:] 
         y_train = df_train.iloc[:, 0]
@@ -140,14 +111,6 @@ class DataLoader:
         return X_train, y_train, X_val, y_val
     
     def __partition(self, X, Y):
-<<<<<<< HEAD
-        m = X.shape[1]
-        mini_batches = []
-        num_mini_batches= math.floor(m / self.batch_size)
-        for i in range(0, num_mini_batches):
-            mini_batch_X = X[:, i*self.batch_size:(i+1)*self.batch_size]
-            mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
-=======
         assert len(X.shape) == 2 or len(X.shape) == 4, "Unsupported tensor shape for batching"
         
         m = X.shape[-1]
@@ -176,22 +139,14 @@ class DataLoader:
             for i in range(0, num_mini_batches):
                 mini_batch_X = X[:, :, :, i*self.batch_size:(i+1)*self.batch_size]
                 mini_batch_Y = Y[i*self.batch_size:(i+1)*self.batch_size]
->>>>>>> main
 
                 mini_batch = (mini_batch_X, mini_batch_Y)
                 mini_batches.append(mini_batch)
 
-<<<<<<< HEAD
-        # Handling the end case (last mini-batch < mini_batch_size)
-        if m % self.batch_size != 0:
-            mini_batch_X = X[:, self.batch_size*num_mini_batches:]
-            mini_batch_Y = Y[self.batch_size*num_mini_batches:]
-=======
             # Handling the end case (last mini-batch < mini_batch_size)
             if m % self.batch_size != 0:
                 mini_batch_X = X[:, :, :, self.batch_size*num_mini_batches:]
                 mini_batch_Y = Y[self.batch_size*num_mini_batches:]
->>>>>>> main
 
                 mini_batch = (mini_batch_X, mini_batch_Y)
                 mini_batches.append(mini_batch)

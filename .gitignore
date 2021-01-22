@@ -3,9 +3,5 @@ framework/dataset/*
 **/.vscode/
 __pycache__/
 *.pyc
-<<<<<<< HEAD
 .idea/
 nn/digit-recognizer
-=======
-.idea/
->>>>>>> main
