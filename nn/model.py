@@ -25,12 +25,13 @@ class Model:
         self.__layers = layers
         self.__layer_num = 0
         for layer in self.__layers:
-            if layer.has_weights is True:
+            if isinstance(layer, Layer):
                 self.__layer_num += 1
                 layer.set_layer_attributes(self.__layer_num, self.__model_name)
-                layer.init_weights()
+                if layer.has_weights:
+                    layer.init_weights()
 
-            elif layer.has_weights is False:
+            elif isinstance(layer, Activation):
                 layer.set_layer_attributes(self.__layer_num)
             
             else:
@@ -65,12 +66,18 @@ class Model:
                 self.__back.back_step(layer.layer_num)
                
             else:
-                dZ = self.__back.get_step_grads(layer.layer_num)
-                A_prev = self.__back.get_layer_values(layer.layer_num - 1)
-                dA_prev, dW, db = layer.backward(dZ,A_prev)
-                self.__back.add_layer_grads(layer.layer_num - 1, dA_prev)
-                self.__back.add_weights_grads(layer.layer_num, dW)
-                self.__back.add_bias_grads(layer.layer_num, db)
+                if layer.has_weights:
+                    dZ = self.__back.get_step_grads(layer.layer_num,layer.has_weights)
+                    A_prev = self.__back.get_layer_values(layer.layer_num - 1)
+                    dA_prev, dW, db = layer.backward(dZ, A_prev)
+                    self.__back.add_layer_grads(layer.layer_num - 1, dA_prev)
+                    self.__back.add_weights_grads(layer.layer_num, dW)
+                    self.__back.add_bias_grads(layer.layer_num, db)
+                else:
+                    dZ = self.__back.get_step_grads(layer.layer_num, layer.has_weights)
+                    A_prev = self.__back.get_layer_values(layer.layer_num - 1)
+                    dA_prev = layer.backward(dZ, A_prev)
+                    self.__back.add_layer_grads(layer.layer_num - 1, dA_prev)
                 
 
 
@@ -83,7 +90,7 @@ class Model:
 
         for layer in self.__layers:
             
-            if isinstance(layer, Layer): # If itsn't a layer with weights & biases like linear & conv. so pass
+            if isinstance(layer, Layer) and layer.has_weights: # If itsn't a layer with weights & biases like linear & conv. so pass
                 weights = self.__params.get_layer_weights(layer.layer_num)
                 bias = self.__params.get_layer_bias(layer.layer_num)
 

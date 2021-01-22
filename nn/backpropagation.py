@@ -104,8 +104,11 @@ class Backward:
     def get_activation_grads(self, layer_num):
         return self.__get_from_dictionary(layer_num,"dG")
 
-    def get_step_grads(self, layer_num):
-        return self.__get_from_dictionary(layer_num,"dZ")
+    def get_step_grads(self, layer_num, has_weights):
+        if has_weights:
+            return self.__get_from_dictionary(layer_num,"dZ")
+        else:
+            return self.__get_from_dictionary(layer_num, "dA")
 
     def get_weights_grads(self, layer_num):
         return self.__get_from_dictionary(layer_num,"dW")

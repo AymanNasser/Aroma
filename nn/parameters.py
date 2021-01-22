@@ -66,10 +66,10 @@ class Parameters:
         prev_layer_name = "Layer " + str(layer_num - 1)
         if layer_name in self.__parameters.keys():
             raise AttributeError(layer_name + " is already initialized")
-        if layer_num > 1 and prev_layer_name not in self.__parameters.keys():
-            raise AttributeError("You must initialize " + prev_layer_name + " first")
-        if layer_num > 1 and self.get_layer_dim(layer_num - 1)[0] != in_dim:
-            raise AttributeError("Dimensions conflict in " + layer_name)
+        #if layer_num > 1 and prev_layer_name not in self.__parameters.keys():
+            #raise AttributeError("You must initialize " + prev_layer_name + " first")
+        #if layer_num > 1 and self.get_layer_dim(layer_num - 1)[0] != in_dim:
+            #raise AttributeError("Dimensions conflict in " + layer_name)
         if layer_num == 0:
             raise AttributeError("Can't initialize weights for layer zero")
 
