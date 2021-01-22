@@ -22,7 +22,10 @@ class Forward:
             if isinstance(layer,Activation):
                 self.__back.add_layer_values(layer.layer_num,X)
             elif isinstance(layer,Layer):
-                self.__back.add_activation_values(layer.layer_num,X)
+                if layer.has_weights:
+                    self.__back.add_activation_values(layer.layer_num,X)
+                else:
+                    self.__back.add_layer_values(layer.layer_num, X)
         return X
 
 

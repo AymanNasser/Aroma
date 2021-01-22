@@ -279,7 +279,7 @@ class Conv2D(Layer):
                         db[:, :, :, c] += dZ[h, w, c, i]
 
             # Set the ith training example's dA_prev to the unpaded da_prev_pad (Hint: use X[pad:-pad, pad:-pad, :])
-            dA_prev[:, :, :, i] = da_prev_pad[self.padding:-self.padding, self.padding:-self.padding, :]
+            dA_prev[:, :, :, i] = da_prev_pad[:, :, :]
         ### END CODE HERE ###
 
         # Making sure your output shape is correct
