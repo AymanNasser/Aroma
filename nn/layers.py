@@ -124,8 +124,6 @@ class Conv2D(Layer):
         self.padding = padding
         self.init_type = init_type
         self.has_weights = True
-        #par = Parameters("model_name")
-        #self.params = Parameters.get_model("model_name")
 
     def init_weights(self):
         if self.init_type == 'random':

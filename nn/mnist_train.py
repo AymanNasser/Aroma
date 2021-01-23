@@ -29,10 +29,10 @@ model = Model([Linear(X_train.shape[0],128, init_type='xavier'),
                Linear(64,32, init_type='xavier'),
                ReLU(),
                Linear(32,10, init_type='xavier'),
-               Softmax()], NLLLoss(), Adam(eps=1e-3))
+               Softmax()], NLLLoss(), Adam(eps=0.01))
 
-#model = Model([Conv2D(1,4),Sigmoid(),MaxPool2D(),Flatten(),Linear(676,10),Softmax()],CrossEntropyLoss())
-#model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
+# model = Model([Conv2D(1,4),Sigmoid(),MaxPool2D(),Flatten(),Linear(676,10),Softmax()],CrossEntropyLoss())
+# model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
 epoch = 16
 
 for i in range(epoch):

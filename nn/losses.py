@@ -12,7 +12,7 @@ class Loss:
 class MSELoss(Loss):
 
     def calc_loss(self, Y_pred, Y):
-        total_loss = np.sum((Y_pred - Y) ** 2, axis=1, keepdims=True, dtype=np.double)
+        total_loss = np.sum((Y_pred - Y) ** 2, axis=1, keepdims=True)
         mean_loss = total_loss / Y_pred.shape[-1]
         return mean_loss
 
@@ -29,7 +29,7 @@ class NLLLoss(Loss):
         """
         m = Y.shape[-1]
         log_likelihood = np.log(Y_pred[Y, range(m)])
-        loss = - np.sum(log_likelihood, dtype=np.double) / m
+        loss = - np.sum(log_likelihood) / m
         return loss
 
     def calc_grad(self, Y_pred, Y):
