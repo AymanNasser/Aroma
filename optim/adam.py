@@ -66,8 +66,8 @@ class Adam(Optimizer):
                 weights = weights - (self.lr * V_corrected['dW' + str(i)]) / np.sqrt(S_corrected['dW' + str(i)] + self.eps)
                 bias = bias - (self.lr * V_corrected['db' + str(i)]) / np.sqrt(S_corrected['db' + str(i)] + self.eps)
 
-                weights[weights == np.nan] = 0.0
-                bias[bias == np.nan] = 0.0
+                weights[np.isnan(weights)] = 0.0
+                bias[np.isnan(bias)] = 0.0
 
                 # Setting updated weights
                 self.__params.update_layer_parameters(layer.layer_num, weights, bias)
