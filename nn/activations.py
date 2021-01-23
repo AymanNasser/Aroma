@@ -57,7 +57,7 @@ class ReLU(Activation):
 
 class Softmax(Activation):
     def forward(self, X):
-        exp_x = np.exp(X)
+        exp_x = np.exp(X - np.max(X)) # Added np.max(X) for numerical stablility 
         out = exp_x/np.sum(exp_x,axis=0,keepdims=True)
         return out
 
@@ -74,15 +74,14 @@ class LeakyRelU(Activation):
         self.neg_slope = negative_slope
 
     def forward(self, X):
-        debug = X * (X >= 0) + (X * self.neg_slope) * (X < 0)
-        return debug
+        out = X * (X >= 0) + (X * self.neg_slope) * (X < 0)
+        return out
 
     def get_grad(self, X):
         grad = np.copy(X)
         grad[X>=0] = 1.0
         grad[X<0] = self.neg_slope
         return grad
-
 
 
 class Tanh(Activation):

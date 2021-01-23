@@ -20,7 +20,7 @@ class MSELoss(Loss):
         return 2.0 * (Y_pred - Y) / Y_pred.shape[0]
 
 
-class CrossEntropyLoss(Loss):
+class NLLLoss(Loss):
 
     def calc_loss(self, Y_pred, Y):
         """
@@ -28,8 +28,8 @@ class CrossEntropyLoss(Loss):
         y is labels (num_examples x 1): one hot encode vector
         """
         m = Y.shape[-1]
-        log_likelihood = -np.log(Y_pred[Y, range(m)])
-        loss = np.sum(log_likelihood) / m
+        log_likelihood = np.log(Y_pred[Y, range(m)])
+        loss = - np.sum(log_likelihood) / m
         return loss
 
     def calc_grad(self, Y_pred, Y):
@@ -39,7 +39,7 @@ class CrossEntropyLoss(Loss):
         """
         grad = np.copy(Y_pred)
         m = Y.shape[-1]
-        grad[Y, range(m)] = 1.0
+        grad[Y, range(m)] -= 1.0
         grad = grad / m
         return grad
 
