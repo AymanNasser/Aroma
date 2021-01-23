@@ -37,7 +37,7 @@ class Model:
             
         self.__back = Backward(self.__model_name, 0, self.__layer_num)
         self.__forward = Forward(self.__layers,self.__model_name)
-        self.__optim.init_params()
+        self.__optim.init_params(self.__layers)
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
@@ -97,6 +97,7 @@ class Model:
 
         #         # Setting updated weights
         #         self.__params.update_layer_parameters(layer.layer_num, weights, bias)
+
 
     def save_model(self):
         self.__params.save_weights()
