@@ -1,23 +1,44 @@
+import os, sys
+sys.path.insert(1, os.getcwd())
+
 from nn.model import Model
-from nn.layers import *
 from nn.activations import *
+from nn.layers import *
 from nn.losses import *
-import numpy as np
+from optim.adam import Adam
+from utils.data import DataLoader
+from eval.evaluation import Evaluation
+from utils.transforms import Transform
+from tqdm import tqdm
+import pandas as pd
 
-model_name = "mnist"
+df = pd.read_csv(os.getcwd() + '/Data.csv')
+X = df.iloc[:, :-1]
+Y = df.iloc[:, -1]
+print(df.describe())
 
-X = np.array([[1],[2],[3]])
-model = Model(layers=[Linear(3,10),Sigmoid(),Linear(10,1)],
-              loss=CrossEntropyLoss(),
-              model_name=model_name)
-              
-for i in range(50):
-    result = model.forward(X)
-    loss = model.compute_cost(np.array([[0.5]]),result)
+X = X.to_numpy().T
+Y = Y.to_numpy()
+
+X = (X - np.mean(X)) / np.std(X)
+Y = Y.reshape(1,Y.shape[0])
+print(X.shape, Y.shape)
+
+model = Model([Linear(X.shape[0],128, init_type='xavier'),
+               ReLU(),
+               Linear(128,64, init_type='xavier'),
+               ReLU(),
+               Linear(64,32, init_type='xavier'),
+               ReLU(),
+               Linear(32,1, init_type='xavier'),
+               ReLU()], MSELoss(), Adam(lr=0.01))
+
+
+epoch = 64
+
+for i in range(epoch):
+    y_pred = model.forward(X)
+    loss = model.compute_cost(Y, y_pred)
     model.backward()
     model.step()
-
-print(result, loss)
-model.save_model()
-file_name = "%s_%s.pa"% (model_name,str(model.get_weights_number()))
-model.load_model(file_name)
+    print("Epoch: ", i + 1, "Loss: ", loss)

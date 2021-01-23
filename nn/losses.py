@@ -10,9 +10,8 @@ class Loss:
 
 
 class MSELoss(Loss):
-
     def calc_loss(self, Y_pred, Y):
-        total_loss = np.sum((Y_pred - Y) ** 2, axis=1, keepdims=True)
+        total_loss = np.sum( np.square(Y_pred - Y) , axis=1, keepdims=True)
         mean_loss = total_loss / Y_pred.shape[-1]
         return mean_loss
 
@@ -21,7 +20,6 @@ class MSELoss(Loss):
 
 
 class NLLLoss(Loss):
-
     def calc_loss(self, Y_pred, Y):
         """
         X is the output from fully connected layer (num_examples x num_classes)

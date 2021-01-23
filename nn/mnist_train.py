@@ -1,3 +1,6 @@
+import os, sys
+sys.path.insert(1, os.getcwd())
+
 from nn.model import Model
 from nn.activations import *
 from nn.layers import *
@@ -8,11 +11,9 @@ from eval.evaluation import Evaluation
 from utils.transforms import Transform
 from tqdm import tqdm
 
-# import os, sys
-# sys.path.insert(1, os.getcwd())
-# data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=32)
+data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=32)
 
-data_loader = DataLoader(batch_size=64)
+# data_loader = DataLoader(batch_size=64)
 
 # X_train, y_train = data_loader.get_train_data(tensor_shape='4D',H=28,W=28,C=1)
 X_train, y_train = data_loader.get_train_data()
