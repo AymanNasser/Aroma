@@ -39,7 +39,7 @@ class NLLLoss(Loss):
         """
         grad = np.copy(Y_pred)
         m = Y.shape[-1]
-        grad[Y, range(m)] -= 1.0
+        grad[Y, range(m)] = 1.0
         grad = grad / m
         return grad
 
