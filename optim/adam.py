@@ -6,7 +6,7 @@ import numpy as np
 
 
 class Adam(Optimizer):
-    def __init__(self, lr=0.01, betas=(0.9,0.999), eps=1e-2):
+    def __init__(self, lr=0.01, betas=(0.9,0.999), eps=1e-8):
         super().__init__()
         self.lr = lr
         self.betas = betas

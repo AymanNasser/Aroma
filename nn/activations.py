@@ -67,10 +67,10 @@ class Softmax(Activation):
         return out
 
     def get_grad(self, X):
-        exp_x = np.exp(X)
-        sum = np.sum(exp_x, axis=0, keepdims=True)
-        grad = (exp_x*sum - np.square(exp_x))/(np.square(sum))
-        grad[np.isnan(grad)] = 0.0
+        # exp_x = np.exp(X)
+        # sum = np.sum(exp_x, axis=0, keepdims=True)
+        # grad = (exp_x*sum - np.square(exp_x))/(np.square(sum))
+        # grad[np.isnan(grad)] = 0.0
         return np.ones_like(X)
 
 
@@ -92,8 +92,12 @@ class LeakyRelU(Activation):
 
 class Tanh(Activation):
     def forward(self, X):
-        return (np.exp(X) - np.exp(-X)) / ((np.exp(X) + np.exp(-X)))
+        tanh = (np.exp(X) - np.exp(-X)) / ((np.exp(X) + np.exp(-X)))
+        tanh[np.isnan(tanh)] = 0.0
+        return tanh
     
     def get_grad(self, X):
         tanh_out = self.forward(X)
-        return (1.0 - np.power(tanh_out, 2))
+        tanh_grad = (1.0 - np.power(tanh_out, 2))
+        tanh_grad[np.isnan(tanh_grad)] = 0.0
+        return tanh_grad

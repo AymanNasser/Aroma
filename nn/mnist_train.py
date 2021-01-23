@@ -23,14 +23,14 @@ batches = data_loader.get_batched_data(X_train, y_train)
 x_val, y_val = data_loader.get_validation_data()
 x_val = trans.normalize(x_val)
 
-model = Model([Linear(X_train.shape[0],128, init_type='xavier'),
-               ReLU(),
-               Linear(128,64, init_type='xavier'),
-               ReLU(),
-               Linear(64,32, init_type='xavier'),
-               ReLU(),
-               Linear(32,10, init_type='xavier'),
-               Softmax()], NLLLoss(), Adam(lr=1))
+model = Model([Linear(X_train.shape[0],128, init_type='random'),
+               Tanh(),
+               Linear(128,64, init_type='random'),
+               Tanh(),
+               Linear(64,32, init_type='random'),
+               Tanh(),
+               Linear(32,10, init_type='random'),
+               Softmax()], NLLLoss(), Adam(lr=0.01))
 
 # model = Model([Conv2D(1,4),Sigmoid(),MaxPool2D(),Flatten(),Linear(676,10),Softmax()],CrossEntropyLoss())
 # model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())

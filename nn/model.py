@@ -85,6 +85,7 @@ class Model:
     # For updating params
     def step(self):
         self.__optim.step()
+        # learning_rate = 0.1
         # for layer in self.__layers:
         #     if isinstance(layer, Layer) and layer.has_weights:
         #         weights = self.__params.get_layer_weights(layer.layer_num)
