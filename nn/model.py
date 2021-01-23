@@ -4,6 +4,8 @@ from nn.parameters import Parameters
 from nn.activations import Activation
 from nn.forward import Forward
 from nn.backpropagation import Backward
+from optim.optimizer import Optimizer
+from optim.adam import Adam
 
 
 class Model:
@@ -11,16 +13,16 @@ class Model:
     Model module for encapsulating layers, losses & activations into a single network
     """
 
-    def __init__(self, layers , loss , optimizer="", model_name="model"):
+    def __init__(self, layers , loss , optimizer : Optimizer , model_name="model"):
         assert isinstance(loss, Loss)
         # assert isinstance(optimizer, Optim)
         for layer in layers:
             assert isinstance(layer, Layer) or isinstance(layer, Activation)
 
         self.__loss = loss
-        # self.__optim = optimizer
+        self.__optim = optimizer
         self.__model_name = model_name
-        self.__params = Parameters(self.__model_name)
+        self.params = Parameters(self.__model_name)
 
         self.__layers = layers
         self.__layer_num = 0
@@ -89,7 +91,6 @@ class Model:
     def step(self, learning_rate=0.01):
 
         for layer in self.__layers:
-            
             if isinstance(layer, Layer) and layer.has_weights: # If itsn't a layer with weights & biases like linear & conv. so pass
                 weights = self.__params.get_layer_weights(layer.layer_num)
                 bias = self.__params.get_layer_bias(layer.layer_num)

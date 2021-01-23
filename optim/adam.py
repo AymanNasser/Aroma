@@ -1,4 +1,8 @@
-from optimizer import Optimizer
+import os, sys
+
+sys.path.insert(1, os.getcwd())
+
+from optim.optimizer import Optimizer
 from nn.parameters import Parameters
 from nn.backpropagation import Backward
 
@@ -7,14 +11,13 @@ import math
 
 
 class Adam(Optimizer):
-    def __init__(self, parameters=None, lr=0.001, betas=(0.9,0.999), eps=1e-08, model_name='Model_1'):
+    def __init__(self, lr=0.001, betas=(0.9,0.999), eps=1e-08, model_name='Model_1'):
         super().__init__()
         self.model_name
-        # self.params = parameters
+        self.__params = parameters
         self.lr = lr
         self.betas = betas
         self.eps = eps
-        self.__params = Parameters.get_model(model_name)
         self.__layers
         self.__backward = Backward.get_backward_model(model_name)
         # t counts the number of steps taken of Adam 
@@ -42,7 +45,6 @@ class Adam(Optimizer):
         beta_1, beta_2 = self.betas
 
         for layer in self.__layers:
-            
             if isinstance(layer, Layer) and layer.has_weights is True: 
                 
                 weights = self.__params.get_layer_weights(layer.layer_num)
