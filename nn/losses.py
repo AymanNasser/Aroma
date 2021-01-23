@@ -28,8 +28,9 @@ class NLLLoss(Loss):
         y is labels (num_examples x 1): one hot encode vector
         """
         m = Y.shape[-1]
-        log_likelihood = np.log(Y_pred[Y, range(m)])
-        loss = - np.sum(log_likelihood) / m
+        y_pred = Y_pred[Y, range(m)]
+        log_likelihood = -np.log(y_pred)
+        loss = np.sum(log_likelihood, axis=1).squeeze() / m
         return loss
 
     def calc_grad(self, Y_pred, Y):
@@ -37,9 +38,10 @@ class NLLLoss(Loss):
         X is the output from fully connected layer (num_examples x num_classes)
         y is labels (num_examples x 1): one hot encode vector
         """
-        grad = np.copy(Y_pred)
+        grad = np.zeros_like(Y_pred)
         m = Y.shape[-1]
         grad[Y, range(m)] = 1.0
+        grad = Y_pred - grad
         grad = grad / m
         return grad
 

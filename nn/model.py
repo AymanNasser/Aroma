@@ -62,7 +62,6 @@ class Model:
                 dG = layer.get_grad(G)
                 self.__back.add_activation_grads(layer.layer_num, dG)
                 self.__back.back_step(layer.layer_num)
-               
             else:
                 if layer.has_weights:
                     dZ = self.__back.get_step_grads(layer.layer_num,layer.has_weights)
@@ -90,10 +89,10 @@ class Model:
         #     if isinstance(layer, Layer) and layer.has_weights:
         #         weights = self.__params.get_layer_weights(layer.layer_num)
         #         bias = self.__params.get_layer_bias(layer.layer_num)
-
+        #
         #         weights -= learning_rate*self.__back.get_weights_grads(layer.layer_num)
         #         bias -= learning_rate*self.__back.get_bias_grads(layer.layer_num)
-
+        #
         #         # Setting updated weights
         #         self.__params.update_layer_parameters(layer.layer_num, weights, bias)
 

@@ -36,18 +36,22 @@ class Activation:
 
 class Sigmoid(Activation):
     def forward(self, X):
-        return 1.0/(1.0 + np.exp(-X))
+        out = 1.0/(1.0 + np.exp(-X))
+        out[out == np.nan] = 0.0
+        return out
 
     def get_grad(self, X):
         sigma_out = self.forward(X)
         sigmoid_grad = sigma_out * (1.0-sigma_out)
+        sigmoid_grad[sigmoid_grad == np.nan] = 0.0
         return sigmoid_grad
 
 
 
 class ReLU(Activation):
     def forward(self, X):
-        return X * (X > 0)
+        relu = X * (X > 0)
+        return relu
 
     def get_grad(self, X):
         relu_grad = 1.0 * (X > 0)
@@ -59,13 +63,14 @@ class Softmax(Activation):
     def forward(self, X):
         exp_x = np.exp(X)
         out = exp_x/np.sum(exp_x, axis=0, keepdims=True)
+        out[out == np.nan] = 0.0
         return out
 
     def get_grad(self, X):
         exp_x = np.exp(X)
         sum = np.sum(exp_x, axis=0, keepdims=True)
         grad = (exp_x*sum - np.square(exp_x))/(np.square(sum))
-        return grad
+        return np.ones_like(X)
 
 
 class LeakyRelU(Activation):

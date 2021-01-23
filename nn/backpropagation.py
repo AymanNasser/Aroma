@@ -59,11 +59,11 @@ class Backward:
     def add_activation_values(self,layer_num,G):
         self.__store_in_dictionary(layer_num,G,'G')
 
-    def add_prediction_values(self,AL):
-        self.__store_in_dictionary(self.__range.end+1,AL,'AL')
+    def add_prediction_values(self,A):
+        self.__store_in_dictionary(self.__range.end,A,'A')
 
-    def add_prediction_grads(self,dAL):
-        self.__store_in_dictionary(self.__range.end+1,dAL,'dAL')
+    def add_prediction_grads(self,dA):
+        self.__store_in_dictionary(self.__range.end,dA,'dA')
 
     def add_layer_grads(self,layer_num,dA):
         self.__store_in_dictionary(layer_num,dA,'dA')
@@ -93,10 +93,10 @@ class Backward:
         return self.__get_from_dictionary(layer_num,"G")
 
     def get_prediction_values(self):
-        return self.__get_from_dictionary(self.__range.end+1,"AL")
+        return self.__get_from_dictionary(self.__range.end,"A")
 
     def get_prediction_grads(self):
-        return self.__get_from_dictionary(self.__range.end+1,"dAL")
+        return self.__get_from_dictionary(self.__range.end,"dA")
 
     def get_layer_grads(self, layer_num):
         return self.__get_from_dictionary(layer_num,"dA")
@@ -122,5 +122,5 @@ class Backward:
         else:
             dA = self.get_layer_grads(layer_num)
         dG = self.get_activation_grads(layer_num)
-        dZ = np.multiply(dG,dA)
+        dZ = np.multiply(dA,dG)
         self.add_step_grads(layer_num,dZ)
