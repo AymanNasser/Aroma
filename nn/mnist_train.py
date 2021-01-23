@@ -14,6 +14,7 @@ from optim.adam import Adam
 data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=64)
 #X_train, y_train = data_loader.get_train_data(tensor_shape='4D',H=28,W=28,C=1)
 X_train, y_train = data_loader.get_train_data()
+X_train = trans.normalize(X_train)
 batches = data_loader.get_batched_data(X_train, y_train)
 x_val, y_val = data_loader.get_validation_data()
 
@@ -28,9 +29,8 @@ for i in range(epoch):
     for X,Y in tqdm(batches):
         y_pred = model.forward(X)
         loss = model.compute_cost(Y, y_pred)
-        #print("Epoch: ", i + 1, "Loss: ", loss)
         model.backward()
         optim.step()
     print("Epoch: ", i + 1, "Loss: ", loss)
 
-model.forward(x_val)
+# model.forward(x_val)

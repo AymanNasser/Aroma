@@ -36,11 +36,11 @@ class Activation:
 
 class Sigmoid(Activation):
     def forward(self, X):
-        return 1/(1 + np.exp(-X))
+        return 1.0/(1.0 + np.exp(-X))
 
     def get_grad(self, X):
         sigma_out = self.forward(X)
-        sigmoid_grad = sigma_out * (1-sigma_out)
+        sigmoid_grad = sigma_out * (1.0-sigma_out)
         return sigmoid_grad
 
 
@@ -50,7 +50,7 @@ class ReLU(Activation):
         return X * (X > 0)
 
     def get_grad(self, X):
-        relu_grad = 1 * (X > 0)
+        relu_grad = 1.0 * (X > 0)
         return relu_grad
 
 
@@ -59,7 +59,6 @@ class Softmax(Activation):
     def forward(self, X):
         exp_x = np.exp(X)
         out = exp_x/np.sum(exp_x,axis=0,keepdims=True)
-        # out = np.max(out,axis=0,keepdims=True)
         return out
 
     def get_grad(self, X):
@@ -80,9 +79,8 @@ class LeakyRelU(Activation):
 
     def get_grad(self, X):
         grad = np.copy(X)
-        grad[X>=0] = 1
+        grad[X>=0] = 1.0
         grad[X<0] = self.neg_slope
-        #l_relu_grad = np.ones_like(X) if X >= 0 else np.full_like(X,self.neg_slope)
         return grad
 
 
@@ -93,29 +91,4 @@ class Tanh(Activation):
     
     def get_grad(self, X):
         tanh_out = self.forward(X)
-        return (1 - np.power(tanh_out, 2))
-
-
-
-# x = np.array([0.1, -0.5, 0.4])
-
-# W = np.array([[0.1, 0.2, 0.3, 0.4, 0.5],
-#               [0.6, 0.7, 0.8, 0.9, 0.1],
-#               [0.11, 0.12, 0.13, 0.14, 0.15]])
-# Z = np.dot(np.transpose(W), x)
-
-# print(Z)
-
-# a = Tanh()
-# y_hat = a.forward(Z)
-# print(y_hat)
-# print(np.tanh(Z))
-
-# # this line instantiates sigmoid function
-# Y_hat = Sigmoid()
-# # calling the object and passing input calculates both
-# # the activation output and gradient of the operation
-# print(Y_hat(Z))
-# # to get the gradient dictionary
-# print(Y_hat.get_grad())
-
+        return (1.0 - np.power(tanh_out, 2))
