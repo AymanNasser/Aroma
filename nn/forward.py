@@ -1,6 +1,7 @@
 from nn.layers import Layer
 from nn.activations import Activation
 from nn.backpropagation import Backward
+from utils.process_tesnor import process_tensor
 
 class Forward:
     """
@@ -18,6 +19,7 @@ class Forward:
         """
         self.__back.add_layer_values(0,X)
         for layer in self.__layers:
+            X = process_tensor(X)
             X = layer.forward(X)
             if isinstance(layer,Activation):
                 self.__back.add_layer_values(layer.layer_num,X)
