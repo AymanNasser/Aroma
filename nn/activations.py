@@ -57,13 +57,13 @@ class ReLU(Activation):
 
 class Softmax(Activation):
     def forward(self, X):
-        exp_x = np.exp(X - np.max(X)) # Added np.max(X) for numerical stablility 
-        out = exp_x/np.sum(exp_x,axis=0,keepdims=True)
+        exp_x = np.exp(X) # Added np.max(X) for numerical stablility
+        out = exp_x/np.sum(exp_x, axis=0, keepdims=True, dtype=np.double)
         return out
 
     def get_grad(self, X):
         exp_x = np.exp(X)
-        sum = np.sum(exp_x,axis=0,keepdims=True)
+        sum = np.sum(exp_x, axis=0, keepdims=True, dtype=np.double)
         grad = (exp_x*sum - np.square(exp_x))/(np.square(sum))
         return grad
 

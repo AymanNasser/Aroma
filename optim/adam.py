@@ -1,20 +1,13 @@
-import os, sys
-
-sys.path.insert(1, os.getcwd())
-
 from optim.optimizer import Optimizer
 from nn.parameters import Parameters
 from nn.backpropagation import Backward
 from nn.layers import Layer
-
 import numpy as np
-import math
 
 
 class Adam(Optimizer):
-    def __init__(self, lr=0.01, betas=(0.9,0.999), eps=1e-8, model_name='model'):
+    def __init__(self, lr=0.01, betas=(0.9,0.999), eps=1e-8):
         super().__init__()
-        self.model_name = model_name
         self.lr = lr
         self.betas = betas
         self.eps = eps
@@ -24,10 +17,11 @@ class Adam(Optimizer):
         self.t = 0
 
 
-    def init_params(self, layers):
+    def init_params(self, layers, model_name):
         """
             Initializing Adams paramaters
         """
+        self.model_name = model_name
         self.__params = Parameters.get_model(self.model_name)
         self.__backward = Backward.get_backward_model(self.model_name)
         self.__layers = layers

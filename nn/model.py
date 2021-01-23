@@ -5,7 +5,6 @@ from nn.activations import Activation
 from nn.forward import Forward
 from nn.backpropagation import Backward
 from optim.optimizer import Optimizer
-from optim.adam import Adam
 
 
 class Model:
@@ -37,7 +36,7 @@ class Model:
             
         self.__back = Backward(self.__model_name, 0, self.__layer_num)
         self.__forward = Forward(self.__layers,self.__model_name)
-        self.__optim.init_params(self.__layers)
+        self.__optim.init_params(self.__layers,self.__model_name)
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
