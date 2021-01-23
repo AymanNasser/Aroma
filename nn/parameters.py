@@ -66,10 +66,10 @@ class Parameters:
         prev_layer_name = "Layer " + str(layer_num - 1)
         if layer_name in self.__parameters.keys():
             raise AttributeError(layer_name + " is already initialized")
-        #if layer_num > 1 and prev_layer_name not in self.__parameters.keys():
-            #raise AttributeError("You must initialize " + prev_layer_name + " first")
-        #if layer_num > 1 and self.get_layer_dim(layer_num - 1)[0] != in_dim:
-            #raise AttributeError("Dimensions conflict in " + layer_name)
+        # if layer_num > 1 and prev_layer_name not in self.__parameters.keys():
+            # raise AttributeError("You must initialize " + prev_layer_name + " first")
+        # if layer_num > 1 and self.get_layer_dim(layer_num - 1)[0] != in_dim:
+            # raise AttributeError("Dimensions conflict in " + layer_name)
         if layer_num == 0:
             raise AttributeError("Can't initialize weights for layer zero")
 
@@ -79,7 +79,8 @@ class Parameters:
 
     def __add_weights(self,Paramaeter_1,Paramaeter_2,Paramaeter_1_name,Paramaeter_2_name,layer_num):
         layer_name = "Layer " + str(layer_num)
-        self.__parameters[layer_name] = {Paramaeter_1_name: Paramaeter_1,Paramaeter_2_name: Paramaeter_2}
+        self.__parameters[layer_name] = {Paramaeter_1_name: np.copy(Paramaeter_1),
+                                         Paramaeter_2_name: np.copy(Paramaeter_2)}
 
     def initiate_zeros(self,in_dim,out_dim,layer_num):
         self.__check_attributes(layer_num,in_dim)
@@ -129,25 +130,20 @@ class Parameters:
     def get_batchnorm_params(self, layer_num):
         layer_name = "Layer " + str(layer_num)
         self.__is_layer_exist(layer_name)
-        gamma = self.__parameters[layer_name]['gamma']
-        beta = self.__parameters[layer_name]['beta']
+        gamma = np.copy(self.__parameters[layer_name]['gamma'])
+        beta = np.copy(self.__parameters[layer_name]['beta'])
         return gamma, beta
-
-    def get_layer_parameters(self,layer_num):
-        layer_name = "Layer " + str(layer_num)
-        self.__is_layer_exist(layer_name)
-        return self.__parameters[layer_name]
 
     def get_layer_bias(self,layer_num):
         layer_name = "Layer " + str(layer_num)
         self.__is_layer_exist(layer_name)
-        bias = self.__parameters[layer_name]["b"]
+        bias = np.copy(self.__parameters[layer_name]["b"])
         return bias
 
     def get_layer_weights(self,layer_num):
         layer_name = "Layer " + str(layer_num)
         self.__is_layer_exist(layer_name)
-        weights = self.__parameters[layer_name]["W"]
+        weights = np.copy(self.__parameters[layer_name]["W"])
         return weights
 
     def update_layer_parameters(self,layer_num,W,b):

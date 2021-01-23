@@ -17,7 +17,7 @@ class MSELoss(Loss):
         return mean_loss
 
     def calc_grad(self, Y_pred, Y):
-        return 2 * (Y_pred - Y) / Y_pred.shape[0]
+        return 2.0 * (Y_pred - Y) / Y_pred.shape[0]
 
 
 class CrossEntropyLoss(Loss):
@@ -39,7 +39,7 @@ class CrossEntropyLoss(Loss):
         """
         grad = np.copy(Y_pred)
         m = Y.shape[-1]
-        grad[Y, range(m)] = 1
+        grad[Y, range(m)] = 1.0
         grad = grad / m
         return grad
 

@@ -30,12 +30,8 @@ class Model:
                 layer.set_layer_attributes(self.__layer_num, self.__model_name)
                 if layer.has_weights:
                     layer.init_weights()
-
             elif isinstance(layer, Activation):
                 layer.set_layer_attributes(self.__layer_num)
-            
-            else:
-                pass
             
         self.__back = Backward(self.__model_name, 0, self.__layer_num)
         self.__forward = Forward(self.__layers,self.__model_name)
@@ -74,9 +70,9 @@ class Model:
                     self.__back.add_weights_grads(layer.layer_num, dW)
                     self.__back.add_bias_grads(layer.layer_num, db)
                 else:
-                    dZ = self.__back.get_step_grads(layer.layer_num, layer.has_weights)
+                    dA = self.__back.get_step_grads(layer.layer_num, layer.has_weights)
                     A_prev = self.__back.get_layer_values(layer.layer_num - 1)
-                    dA_prev = layer.backward(dZ, A_prev)
+                    dA_prev = layer.backward(dA, A_prev)
                     self.__back.add_layer_grads(layer.layer_num - 1, dA_prev)
                 
 
@@ -87,21 +83,16 @@ class Model:
 
     # For updating params
     def step(self, learning_rate=0.01):
-
         for layer in self.__layers:
-            
-            if isinstance(layer, Layer) and layer.has_weights: # If itsn't a layer with weights & biases like linear & conv. so pass
+            if isinstance(layer, Layer) and layer.has_weights:
                 weights = self.__params.get_layer_weights(layer.layer_num)
                 bias = self.__params.get_layer_bias(layer.layer_num)
 
-                weights = weights - learning_rate*self.__back.get_weights_grads(layer.layer_num)
-                bias = bias - learning_rate*self.__back.get_bias_grads(layer.layer_num)
+                weights -= learning_rate*self.__back.get_weights_grads(layer.layer_num)
+                bias -= learning_rate*self.__back.get_bias_grads(layer.layer_num)
 
                 # Setting updated weights
                 self.__params.update_layer_parameters(layer.layer_num, weights, bias)
-                
-            else:
-                continue
 
     def save_model(self):
         self.__params.save_weights()
