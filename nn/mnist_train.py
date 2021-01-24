@@ -19,7 +19,8 @@ data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=64)
 # data_loader = DataLoader(batch_size=64)
 
 # Training
-X_train, y_train = data_loader.get_train_data(tensor_shape='4D', H=28, W=28, C=1)
+# X_train, y_train = data_loader.get_train_data(tensor_shape='4D', H=28, W=28, C=1)
+X_train, y_train = data_loader.get_train_data()
 trans = Transform()
 X_train = trans.normalize(X_train)
 batches = data_loader.get_batched_data(X_train, y_train)
@@ -31,24 +32,24 @@ X_val = trans.normalize(X_val)
 
 
 
-# model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
-#                ReLU(),
-#                Linear(128,64, init_type='xavier'),
-#                ReLU(),
-#                Linear(64,32, init_type='xavier'),
-#                ReLU(),
-#                Linear(32,16, init_type='xavier'),
-#                ReLU(),
-#                Linear(16,10, init_type='xavier'),
-#                Softmax()], NLLLoss(), SGD(lr=0.01), live_update=False)
+model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
+               ReLU(),
+               Linear(128,64, init_type='xavier'),
+               ReLU(),
+               Linear(64,32, init_type='xavier'),
+               ReLU(),
+               Linear(32,16, init_type='xavier'),
+               ReLU(),
+               Linear(16,10, init_type='xavier'),
+               Softmax()], NLLLoss(), SGD(lr=0.001, momentum=0.9), live_update=False)
 
 # print(model.get_count_model_params())
 
-model = Model([Conv2D(1,2, stride=6),
-               ReLU(),
-               Flatten(),
-               Linear(50,10),
-               Softmax()], loss=NLLLoss(), optimizer=SGD(lr=0.01))
+# model = Model([Conv2D(1,2, stride=6),
+#                ReLU(),
+#                Flatten(),
+#                Linear(50,10),
+#                Softmax()], loss=NLLLoss(), optimizer=SGD(lr=0.01))
 
 # model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
 epoch = 2

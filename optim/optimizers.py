@@ -87,21 +87,42 @@ class Adam(Optimizer):
 
 
 class SGD(Optimizer):
-    def __init__(self, lr=0.01):
+    def __init__(self, lr=0.01, momentum=0):
         super().__init__(lr=lr)
+        self.beta = momentum
+        if momentum != 0:
+            self.V = {}
 
     def init_params(self, layers, model_name):
         super().init_params(layers, model_name)
+        if self.beta != 0:
+            for layer in self.layers:
+                if isinstance(layer, Layer) and layer.has_weights is True:
+                    i = layer.layer_num
+                    self.V['dW' + str(i)] = np.zeros_like(self.params.get_layer_weights(i))
+                    self.V['db' + str(i)] = np.zeros_like(self.params.get_layer_bias(i))
+
 
     def step(self):
         for layer in self.layers:
             if isinstance(layer, Layer) and layer.has_weights:
-                weights = self.params.get_layer_weights(layer.layer_num)
-                bias = self.params.get_layer_bias(layer.layer_num)
-        
-                weights = weights - self.lr * self.backward.get_weights_grads(layer.layer_num)
-                bias = bias -  self.lr * self.backward.get_bias_grads(layer.layer_num)
-        
+                i = layer.layer_num
+                weights = self.params.get_layer_weights(i)
+                bias = self.params.get_layer_bias(i)
+                dW = self.backward.get_weights_grads(i)
+                db = self.backward.get_bias_grads(i)
+
+                if self.beta == 0:
+                    weights = weights - self.lr * dW
+                    bias = bias -  self.lr * db
+            
+                else:        
+                    self.V['dW' + str(i)] = self.beta * self.V['dW' + str(i)] + (1.0 - self.beta) * dW
+                    self.V['db' + str(i)] = self.beta * self.V['db' + str(i)] + (1.0 - self.beta) * db
+
+                    weights = weights - self.lr * self.V['dW' + str(i)]
+                    bias = bias - self.lr * self.V['db' + str(i)]
+
                 # Setting updated weights
                 self.params.update_layer_parameters(layer.layer_num, weights, bias)
 
