@@ -31,7 +31,8 @@ class DataLoader:
             pass
 
         train_data, test_data = self.__load_data()
-        
+        self.pd_frame = train_data
+
         X_train, y_train, X_val, y_val = self.__split_data(train_data, self.split_ratio, self.shuffle)
         
         X_train, y_train, X_val, y_val = self.transform.to_tensor(X_train), \
@@ -202,3 +203,6 @@ class DataLoader:
             return self.__partition(X, Y)
         else:
             return self.X_train, self.y_train
+
+    def get_pandas_frame(self):
+        return self.pd_frame
