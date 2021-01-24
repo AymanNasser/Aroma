@@ -6,7 +6,7 @@ from nn.activations import *
 from nn.layers import *
 from nn.losses import *
 from optim.optimizers import Adam, SGD
-from utils.data import DataLoader
+from utils.dataloader import DataLoader
 from eval.evaluation import Evaluation
 from utils.transforms import Transform
 from tqdm import tqdm
@@ -14,8 +14,8 @@ from matplotlib import pyplot as plt
 
 INPUT_FEATURE = 784
 
-# data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=16)
-data_loader = DataLoader(batch_size=64)
+data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=16)
+# data_loader = DataLoader(batch_size=64)
 
 # Training
 X_train, y_train = data_loader.get_train_data()
@@ -39,13 +39,13 @@ model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
                Linear(32,16, init_type='xavier'),
                ReLU(),
                Linear(16,10, init_type='xavier'),
-               Softmax()], NLLLoss(), SGD(lr=0.1), live_update=True)
+               Softmax()], NLLLoss(), SGD(lr=0.01), live_update=False)
 
 # print(model.get_count_model_params())
 
 # model = Model([Conv2D(1,4),Sigmoid(),MaxPool2D(),Flatten(),Linear(676,10),Softmax()],CrossEntropyLoss())
 # model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
-epoch = 16
+epoch = 1
 
 
 # model.load_model(str(os.getcwd()) + '/model_111514.pa')

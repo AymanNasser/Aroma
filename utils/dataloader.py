@@ -34,10 +34,6 @@ class DataLoader:
         
         X_train, y_train, X_val, y_val = self.__split_data(train_data, self.split_ratio, self.shuffle)
         
-<<<<<<< HEAD:utils/data.py
-
-=======
->>>>>>> main:utils/dataloader.py
         X_train, y_train, X_val, y_val = self.transform.to_tensor(X_train), \
                                          self.transform.to_tensor(y_train), \
                                          self.transform.to_tensor(X_val), \
@@ -47,10 +43,6 @@ class DataLoader:
         self.y_train = y_train.reshape(y_train.shape[0], -1).T
         self.X_val = X_val.reshape(X_val.shape[0], -1).T
         self.y_val = y_val.reshape(y_val.shape[0], -1).T
-<<<<<<< HEAD:utils/data.py
-
-=======
->>>>>>> main:utils/dataloader.py
 
         self.X_test = self.transform.to_tensor(test_data)
         self.X_test = self.X_test.reshape(self.X_test.shape[0], -1).T

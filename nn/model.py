@@ -27,7 +27,7 @@ class Model:
         self.__params = Parameters(self.__model_name)
         self.__vis = None
         if live_update:
-            self.__vis = Visualization(self.__loss.__class__.__name__)
+            self.__vis = Visualization()
 
         self.__layers = layers
         self.__layer_num = 0
@@ -56,7 +56,7 @@ class Model:
 
         cost = self.__loss.calc_loss(Y_pred,Y)
         if self.__vis is not None:
-            self.__vis.live_update(cost)
+            self.__vis.plot_live_update(cost)
         dAL = self.__loss.calc_grad(Y_pred,Y)
         self.__back.add_prediction_grads(dAL)
 
