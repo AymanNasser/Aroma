@@ -156,13 +156,13 @@ class Parameters:
         self.__is_layer_exist(layer_name)
         return self.__parameters[layer_name]["W"].shape
 
-    def save_weights(self):
+    def save_weights(self, file_path):
         file_name = self.__model_name + '_' + str(self.__parameters_num) + self.__extension
-        with open(file_name,'ab') as file:
-            pickle.dump(self.__parameters,file)
-
-    def load_weights(self,path_to_file):
-        with open(path_to_file,'rb') as file:
+        with open(file_path + '/' + file_name, 'ab') as file:
+            pickle.dump(self.__parameters, file)
+        
+    def load_weights(self, file):
+        with open(file, 'rb') as file:
             self.__parameters = pickle.load(file)
 
     def get_count_model_params(self):

@@ -6,6 +6,8 @@ from nn.forward import Forward
 from nn.backpropagation import Backward
 from optim.optimizers import Optimizer
 
+import os
+
 
 class Model:
     """
@@ -86,11 +88,14 @@ class Model:
     def step(self):
         self.__optim.step()
 
-    def save_model(self):
-        self.__params.save_weights()
+    def save_model(self, file_path=os.getcwd()):
+        self.__params.save_weights(file_path)
 
-    def load_model(self,path_to_model):
-        self.__params.load_weights(path_to_model)
+    def load_model(self, file):
+        if os.path.exists(file) and file.endswith('.pa'):
+            self.__params.load_weights(file)
+        else:
+            raise AttributeError("Please specifiy correct path")
 
     def get_count_model_params(self):
         return self.__params.get_count_model_params()

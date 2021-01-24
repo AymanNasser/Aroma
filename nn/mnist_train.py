@@ -41,12 +41,14 @@ model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
                Linear(16,10, init_type='xavier'),
                Softmax()], NLLLoss(), SGD(lr=0.001))
 
+# print(model.get_count_model_params())
+
 # model = Model([Conv2D(1,4),Sigmoid(),MaxPool2D(),Flatten(),Linear(676,10),Softmax()],CrossEntropyLoss())
 # model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
 epoch = 0
-print(model.get_count_model_params())
 
-# model.load_model(os.getcwd() + '/model_111514.pa')
+
+model.load_model(str(os.getcwd()) + '/model_111514.pa')
 
 cost = 0.
 for i in range(epoch):
