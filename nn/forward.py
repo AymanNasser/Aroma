@@ -30,6 +30,10 @@ class Forward:
                     self.__back.add_layer_values(layer.layer_num, X)
         return X
 
-
+    def predict(self, X):
+        for layer in self.__layers:
+            X = layer.forward(X)
+            
+        return X
 
 

@@ -94,3 +94,6 @@ class Model:
 
     def get_weights_number(self):
         return self.__params.get_weights_number()
+
+    def predict(self, X):
+        return self.__forward.predict(X)

@@ -43,7 +43,8 @@ model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
 
 # model = Model([Conv2D(1,4),Sigmoid(),MaxPool2D(),Flatten(),Linear(676,10),Softmax()],CrossEntropyLoss())
 # model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
-epoch = 16
+epoch = 0
+print(model.get_weights_number())
 
 # model.load_model(os.getcwd() + '/model_111514.pa')
 
@@ -61,7 +62,7 @@ for i in range(epoch):
 # model.save_model()
 
 # Evaulating model
-Pred_ = model.forward(X_val)
+Pred_ = model.predict(X_val)
 Pred_ = np.argmax(Pred_, axis=0)
 Y_val = Y_val.T.squeeze()
 
