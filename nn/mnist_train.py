@@ -15,8 +15,8 @@ from matplotlib import pyplot as plt
 
 INPUT_FEATURE = 784
 
-data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=64)
-# data_loader = DataLoader(batch_size=64)
+# data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=64)
+data_loader = DataLoader(batch_size=64)
 
 # Training
 # X_train, y_train = data_loader.get_train_data(tensor_shape='4D', H=28, W=28, C=1)
@@ -52,21 +52,22 @@ model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
 #                Softmax()], loss=NLLLoss(), optimizer=SGD(lr=0.01))
 
 # model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
-epoch = 2
+epoch = 4
 
 
 # model.load_model(str(os.getcwd()) + '/model_111514.pa')
+vis = Visualization()
 
-cost = 0.
 for i in range(epoch):
     for X,Y in tqdm(batches):
         y_pred = model.forward(X)
         loss = model.compute_cost(Y, y_pred)
         model.backward()
         model.step()
+    vis.plot_live_update(xlabel="Epoch No.", x=i + 1, ylabel="Loss", y=loss)
     print("Epoch: ", i + 1, "Loss: ", loss)
-    cost += loss
 
+vis.pause_figure()
 # print("Average Cost: ", cost / len(batches))
 # model.save_model()
 

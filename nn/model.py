@@ -55,8 +55,8 @@ class Model:
     def compute_cost(self,Y,Y_pred):
 
         cost = self.__loss.calc_loss(Y_pred,Y)
-        if self.__vis is not None:
-            self.__vis.plot_live_update(cost)
+        # if self.__vis is not None:
+        #     self.__vis.plot_live_update(cost)
         dAL = self.__loss.calc_grad(Y_pred,Y)
         self.__back.add_prediction_grads(dAL)
 
