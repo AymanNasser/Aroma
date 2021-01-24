@@ -1,26 +1,31 @@
-## Aroma DL-Framework
-Aroma is a deep learning framework implemented in python using (numpy, matplotlib, pandas & pickle)
+# Aroma DL-Framework
+Aroma is a deep learning framework implemented in python
 
-# Install
+## Install
 ```
 pip insall pyaroma
 ```
 
-# Design
+## Install Required Packages
+```
+pip install -r requirements.txt 
+```
+
+## Design
 Aroma is designed based on 5 modules:
 
-[**nn module**](nn/): which contains the core of the framework such as layers, activations, losses, parameters, forward and backwar
+[**nn module**](nn/): which contains the core modules of the framework such as layers, activations, losses, parameters, forward and backward modules
 
-[**optim module**](optim/): which contains the optimizers of for updating the weights (NOTE: currently support just Adam and SGD)
+[**optim module**](optim/): which contains the optimizers for updating the weights (NOTE: currently supporting just Adam and SGD)
 
 [**eval module**](eval/): which contains the evaluation metrices for the model
 
-[**vis module**](vis/): which contains the visualizer module for live loss update
+[**vis module**](vis/): which contains the visualization module for live loss update & others
 
-[**utils module**](utils/): which containsthe dataloader that process data for training and validation and support auto download for mnist dataset from [kaggle](https://www.kaggle.com/c/digit-recognizer), and others helper classes and functions for the framework
+[**utils module**](utils/): which contains the dataloader that process data for training and validation and support auto download for mnist dataset from [kaggle](https://www.kaggle.com/c/digit-recognizer), and others helper classes and functions for the framework
 
 
-# Demo
+## Demo
 ```
 from nn.model import Model
 from nn.activations import *
@@ -69,10 +74,9 @@ for i in range(epoch):
         model.backward()
         model.step()
     print("Epoch: ", i + 1, "Loss: ", loss)
-    cost += loss
 
-# print("Average Cost: ", cost / len(batches))
-# model.save_model()
+# Saving model
+model.save_model()
 
 # Evaulating model
 Pred_ = model.predict(X_val)

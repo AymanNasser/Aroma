@@ -1,7 +1,6 @@
 import numpy as np
 
 class Loss:
-
     def calc_loss(self, *args, **kwargs):
         pass
 
