@@ -10,6 +10,7 @@ from utils.dataloader import DataLoader
 from eval.evaluation import Evaluation
 from viz.visualization import Visualization
 from utils.transforms import Transform
+from utils.process_tensor import padding
 from tqdm import tqdm
 from matplotlib import pyplot as plt
 
@@ -56,10 +57,7 @@ epoch = 16
 
 # model.load_model(str(os.getcwd()) + '/model_111514.pa')
 
-sample = data_loader.get_train_sample(50)
-
 vis = Visualization()
-vis.plot_sample(sample)
 
 for i in range(epoch):
     for X,Y in tqdm(batches):
@@ -71,8 +69,8 @@ for i in range(epoch):
     print("Epoch: ", i + 1, "Loss: ", loss)
 
 vis.pause_figure()
-# print("Average Cost: ", cost / len(batches))
-# model.save_model()
+
+model.save_model()
 
 # Evaulating model
 Pred_ = model.predict(X_val)
@@ -87,5 +85,4 @@ f1_score = eval.compute_f1_score()
 conf_mat = eval.compute_confusion_mat()
 print("Accuracy: ",acc,"Precision: ",prec,"Recall: ",recall,"F1_Score: ",f1_score)   
 
-vis = Visualization()
 vis.plot_confusion_matrix(conf_mat)

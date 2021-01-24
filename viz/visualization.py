@@ -44,12 +44,15 @@ class Visualization:
         sns.heatmap(conf_mat, annot=True, annot_kws={"size": 10})
         plt.show()
 
-    def plot_sample(self, sample=(None, None), reshape_dim=(28,28,1)):
-        img = sample[0]
-        label = sample[1]
-        img = img.reshape(reshape_dim)
+    def plot_sample(self, sample=None, reshape_dim=(28,28,1)):
+        if isinstance(sample, tuple):
+            img = sample[0]
+            label = sample[1]
+            print(f"Sample Label: {label}")
+        else:
+            img = sample
         
-        print(f"Sample Label: {label}")
+        img = img.reshape(reshape_dim)
         plt.imshow(img)
         plt.show()
 
