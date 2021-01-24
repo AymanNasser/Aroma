@@ -29,11 +29,11 @@ class Visualization:
         show()
 
 
-vis = Visualization()
-loss = 5
-for i in range(20):
-    vis.live_update(loss)
-    loss -= 0.2
-    time.sleep(0.0001)
-
-vis.pause_figure()
+# vis = Visualization("Cross Entropy Loss")
+# loss = 5
+# for i in range(20):
+#     vis.live_update(loss)
+#     loss -= 0.2
+#     time.sleep(0.0001)
+#
+# vis.pause_figure()
