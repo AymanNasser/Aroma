@@ -42,3 +42,12 @@ class Visualization:
         sn.heatmap(conf_mat, annot=True, annot_kws={"size": 10})
         plt.show()
 
+    def plot_sample(self, sample=(None, None), reshape_dim=(28,28,1)):
+        img = sample[0]
+        label = sample[1]
+        img = img.reshape(reshape_dim)
+        
+        print(f"Sample Label: {label}")
+        plt.imshow(img)
+        plt.show()
+
