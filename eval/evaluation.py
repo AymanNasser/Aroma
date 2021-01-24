@@ -48,7 +48,7 @@ class Evaluation:
         else:
             raise AttributeError("Wrong averaging attribute")
     
-        return acc
+        return acc * 100
 
     def compute_recall(self):
         recall = self.__TP / (self.__TP + self.__TN) 
@@ -61,7 +61,7 @@ class Evaluation:
         else:
             raise AttributeError("Wrong averaging attribute")
     
-        return recall
+        return recall * 100
 
     def compute_precision(self):
         precision = self.__TP / (self.__TP + self.__FN)
@@ -74,7 +74,7 @@ class Evaluation:
         else:
             raise AttributeError("Wrong averaging attribute")
     
-        return precision 
+        return precision * 100
 
     def compute_f1_score(self):
         f1_score = (2*self.__TP) / (2*self.__TP + self.__FP + self.__FN)
@@ -87,4 +87,4 @@ class Evaluation:
         else:
             raise AttributeError("Wrong averaging attribute")
 
-        return f1_score
+        return f1_score * 100
