@@ -5,7 +5,6 @@ from nn.activations import Activation
 from nn.forward import Forward
 from nn.backpropagation import Backward
 from optim.optimizers import Optimizer
-from viz.visualization import Visualization
 
 import os
 
@@ -15,7 +14,7 @@ class Model:
     Model module for encapsulating layers, losses & activations into a single network
     """
 
-    def __init__(self, layers , loss , optimizer , live_update=False,model_name="model"):
+    def __init__(self, layers , loss , optimizer , model_name="model"):
         assert isinstance(loss, Loss)
         assert isinstance(optimizer, Optimizer)
         for layer in layers:
@@ -25,9 +24,6 @@ class Model:
         self.__loss = loss
         self.__optim = optimizer
         self.__params = Parameters(self.__model_name)
-        self.__vis = None
-        if live_update:
-            self.__vis = Visualization()
 
         self.__layers = layers
         self.__layer_num = 0
@@ -53,10 +49,7 @@ class Model:
         return self.__forward.propagate(X)
 
     def compute_cost(self,Y,Y_pred):
-
         cost = self.__loss.calc_loss(Y_pred,Y)
-        # if self.__vis is not None:
-        #     self.__vis.plot_live_update(cost)
         dAL = self.__loss.calc_grad(Y_pred,Y)
         self.__back.add_prediction_grads(dAL)
 

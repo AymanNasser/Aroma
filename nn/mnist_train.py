@@ -15,8 +15,8 @@ from matplotlib import pyplot as plt
 
 INPUT_FEATURE = 784
 
-# data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=64)
-data_loader = DataLoader(batch_size=64)
+data_loader = DataLoader(str(os.getcwd()) + '/nn',batch_size=32)
+# data_loader = DataLoader(batch_size=64)
 
 # Training
 # X_train, y_train = data_loader.get_train_data(tensor_shape='4D', H=28, W=28, C=1)
@@ -24,7 +24,6 @@ X_train, y_train = data_loader.get_train_data()
 trans = Transform()
 X_train = trans.normalize(X_train)
 batches = data_loader.get_batched_data(X_train, y_train)
-
 
 # Validation
 X_val, Y_val = data_loader.get_validation_data()
@@ -41,7 +40,7 @@ model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
                Linear(32,16, init_type='xavier'),
                ReLU(),
                Linear(16,10, init_type='xavier'),
-               Softmax()], NLLLoss(), SGD(lr=0.001, momentum=0.9), live_update=False)
+               Softmax()], loss=NLLLoss(), optimizer=Adam(lr=0.001))
 
 # print(model.get_count_model_params())
 
@@ -52,11 +51,15 @@ model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
 #                Softmax()], loss=NLLLoss(), optimizer=SGD(lr=0.01))
 
 # model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
-epoch = 4
+epoch = 16
 
 
 # model.load_model(str(os.getcwd()) + '/model_111514.pa')
+
+sample = data_loader.get_train_sample(50)
+
 vis = Visualization()
+vis.plot_sample(sample)
 
 for i in range(epoch):
     for X,Y in tqdm(batches):
@@ -72,17 +75,17 @@ vis.pause_figure()
 # model.save_model()
 
 # Evaulating model
-# Pred_ = model.predict(X_val)
-# Pred_ = np.argmax(Pred_, axis=0)
-# Y_val = Y_val.T.squeeze()
+Pred_ = model.predict(X_val)
+Pred_ = np.argmax(Pred_, axis=0)
+Y_val = Y_val.T.squeeze()
 
-# eval = Evaluation(Y_val, Pred_)
-# acc = eval.compute_accuracy()
-# prec = eval.compute_precision()
-# recall = eval.compute_recall()
-# f1_score = eval.compute_f1_score()
-# conf_mat = eval.compute_confusion_mat()
-# print("Accuracy: ",acc,"Precision: ",prec,"Recall: ",recall,"F1_Score: ",f1_score)   
+eval = Evaluation(Y_val, Pred_, average='weighted')
+acc = eval.compute_accuracy()
+prec = eval.compute_precision()
+recall = eval.compute_recall()
+f1_score = eval.compute_f1_score()
+conf_mat = eval.compute_confusion_mat()
+print("Accuracy: ",acc,"Precision: ",prec,"Recall: ",recall,"F1_Score: ",f1_score)   
 
-# vis = Visualization()
-# vis.plot_confusion_matrix(conf_mat)
+vis = Visualization()
+vis.plot_confusion_matrix(conf_mat)
