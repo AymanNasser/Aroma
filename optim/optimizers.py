@@ -1,9 +1,22 @@
-from optim.optimizer import Optimizer
 from nn.parameters import Parameters
 from nn.backpropagation import Backward
 from nn.layers import Layer
 from utils.process_tensor import process_tensor
 import numpy as np
+
+
+class Optimizer:
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def step(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def init_params(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def zero_grad(self, *args, **kwargs):
+        raise NotImplementedError
 
 
 class Adam(Optimizer):
@@ -75,3 +88,31 @@ class Adam(Optimizer):
                 
             else:
                 continue
+
+
+class SGD(Optimizer):
+    def __init__(self, lr=0.01):
+        super().__init__()
+        self.lr = lr
+
+    def init_params(self, layers, model_name):
+        self.model_name = model_name
+        self.__params = Parameters.get_model(self.model_name)
+        self.__backward = Backward.get_backward_model(self.model_name)
+        self.__layers = layers
+
+
+    def step(self):
+        for layer in self.__layers:
+            if isinstance(layer, Layer) and layer.has_weights:
+                weights = self.__params.get_layer_weights(layer.layer_num)
+                bias = self.__params.get_layer_bias(layer.layer_num)
+        
+                weights = weights - self.lr * self.__backward.get_weights_grads(layer.layer_num)
+                bias = bias -  self.lr * self.__backward.get_bias_grads(layer.layer_num)
+        
+                # Setting updated weights
+                self.__params.update_layer_parameters(layer.layer_num, weights, bias)
+
+
+    

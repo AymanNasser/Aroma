@@ -5,7 +5,7 @@ from nn.model import Model
 from nn.activations import *
 from nn.layers import *
 from nn.losses import *
-from optim.adam import Adam
+from optim.optimizers import Adam, SGD
 from utils.data import DataLoader
 from eval.evaluation import Evaluation
 from utils.transforms import Transform
@@ -57,8 +57,8 @@ for i in range(epoch):
     print("Epoch: ", i + 1, "Loss: ", loss)
     cost += loss
 
-print("Average Cost: ", cost / len(batches))
-model.save_model()
+# print("Average Cost: ", cost / len(batches))
+# model.save_model()
 
 # Evaulating model
 Pred_ = model.forward(X_val)
@@ -71,3 +71,4 @@ prec = eval.compute_precision()
 recall = eval.compute_recall()
 f1_score = eval.compute_f1_score()
 print("Accuracy: ",acc,"Precision: ",prec,"Recall: ",recall,"F1_Score: ",f1_score)   
+
