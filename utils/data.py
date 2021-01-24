@@ -51,7 +51,7 @@ class DataLoader:
                                          self.transform.to_tensor(y_train), \
                                          self.transform.to_tensor(X_val), \
                                          self.transform.to_tensor(y_val)
-
+        
         self.X_train = X_train.reshape(X_train.shape[0], -1).T
         self.y_train = y_train.reshape(y_train.shape[0], -1).T
         self.X_val = X_val.reshape(X_val.shape[0], -1).T

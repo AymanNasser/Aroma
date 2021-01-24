@@ -25,7 +25,7 @@ batches = data_loader.get_batched_data(X_train, y_train)
 
 
 # Validation
-X_val, y_val = data_loader.get_validation_data()
+X_val, Y_val = data_loader.get_validation_data()
 X_val = trans.normalize(X_val)
 
 
@@ -39,14 +39,15 @@ model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
                Linear(32,16, init_type='xavier'),
                ReLU(),
                Linear(16,10, init_type='xavier'),
-               Softmax()], NLLLoss(), Adam(lr=0.0001))
+               Softmax()], NLLLoss(), Adam(lr=0.001))
 
 # model = Model([Conv2D(1,4),Sigmoid(),MaxPool2D(),Flatten(),Linear(676,10),Softmax()],CrossEntropyLoss())
 # model = Model([Conv2D(1,4),Sigmoid(),Flatten(),Linear(2704,10),Softmax()],CrossEntropyLoss())
 epoch = 16
 
-# model.load_model(os.getcwd() + '/model_111514.pa')
+model.load_model(os.getcwd() + '/model_111514.pa')
 
+cost = 0.
 for i in range(epoch):
     for X,Y in tqdm(batches):
         y_pred = model.forward(X)
@@ -54,12 +55,19 @@ for i in range(epoch):
         model.backward()
         model.step()
     print("Epoch: ", i + 1, "Loss: ", loss)
+    cost += loss
 
-# model.save_model()
+print("Average Cost: ", cost / len(batches))
+model.save_model()
 
-# eval = Evaluation(Y,y_pred)
-# acc = eval.compute_accuracy()
-# prec = eval.compute_precision()
-# recall = eval.compute_recall()
-# f1_score = eval.compute_f1_score()
-# print("Accuracy: ",acc,"Precision: ",prec,"Recall: ",recall,"F1_Score: ",f1_score)
+# Evaulating model
+Pred_ = model.forward(X_val)
+Pred_ = np.argmax(Pred_, axis=0)
+Y_val = Y_val.T.squeeze()
+
+eval = Evaluation(Y_val, Pred_)
+acc = eval.compute_accuracy()
+prec = eval.compute_precision()
+recall = eval.compute_recall()
+f1_score = eval.compute_f1_score()
+print("Accuracy: ",acc,"Precision: ",prec,"Recall: ",recall,"F1_Score: ",f1_score)   
