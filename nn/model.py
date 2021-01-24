@@ -18,9 +18,9 @@ class Model:
         for layer in layers:
             assert isinstance(layer, Layer) or isinstance(layer, Activation)
 
+        self.__model_name = model_name
         self.__loss = loss
         self.__optim = optimizer
-        self.__model_name = model_name
         self.__params = Parameters(self.__model_name)
 
         self.__layers = layers
@@ -35,8 +35,8 @@ class Model:
                 layer.set_layer_attributes(self.__layer_num)
             
         self.__back = Backward(self.__model_name, 0, self.__layer_num)
-        self.__forward = Forward(self.__layers,self.__model_name)
-        self.__optim.init_params(self.__layers,self.__model_name)
+        self.__forward = Forward(self.__layers, self.__model_name)
+        self.__optim.init_params(self.__layers, self.__model_name)
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)

@@ -6,14 +6,20 @@ import numpy as np
 
 
 class Optimizer:
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, lr=0.01, *args, **kwargs):
+        self.lr = lr
 
     def step(self, *args, **kwargs):
         raise NotImplementedError
 
-    def init_params(self, *args, **kwargs):
-        raise NotImplementedError
+    def init_params(self, layers, model_name, *args, **kwargs):
+        """
+            Initializing optimizer paramaters
+        """
+        self.model_name = model_name
+        self.params = Parameters.get_model(self.model_name)
+        self.backward = Backward.get_backward_model(self.model_name)
+        self.layers = layers
 
     def zero_grad(self, *args, **kwargs):
         raise NotImplementedError
@@ -21,34 +27,24 @@ class Optimizer:
 
 class Adam(Optimizer):
     def __init__(self, lr=0.01, betas=(0.9,0.999), eps=1e-8):
-        super().__init__()
-        self.lr = lr
+        super().__init__(lr=lr)
         self.betas = betas
         self.eps = eps
         self.V = {}
         self.S = {}
         # t counts the number of steps taken of Adam 
         self.t = 0
-
-
+    
     def init_params(self, layers, model_name):
-        """
-            Initializing Adams paramaters
-        """
-        self.model_name = model_name
-        self.__params = Parameters.get_model(self.model_name)
-        self.__backward = Backward.get_backward_model(self.model_name)
-        self.__layers = layers
-
-        for layer in self.__layers:
+        super().init_params(layers, model_name)
+        for layer in self.layers:
             if isinstance(layer, Layer) and layer.has_weights is True:
                 i = layer.layer_num
-                self.V['dW' + str(i)] = np.zeros_like(self.__params.get_layer_weights(i))
-                self.V['db' + str(i)] = np.zeros_like(self.__params.get_layer_bias(i))
+                self.V['dW' + str(i)] = np.zeros_like(self.params.get_layer_weights(i))
+                self.V['db' + str(i)] = np.zeros_like(self.params.get_layer_bias(i))
 
-                self.S['dW' + str(i)] = np.zeros_like(self.__params.get_layer_weights(i))
-                self.S['db' + str(i)] = np.zeros_like(self.__params.get_layer_bias(i))
-
+                self.S['dW' + str(i)] = np.zeros_like(self.params.get_layer_weights(i))
+                self.S['db' + str(i)] = np.zeros_like(self.params.get_layer_bias(i))
 
     def step(self):
         self.t += 1
@@ -57,13 +53,13 @@ class Adam(Optimizer):
 
         beta_1, beta_2 = self.betas
         
-        for layer in self.__layers:
+        for layer in self.layers:
             if isinstance(layer, Layer) and layer.has_weights is True: 
                 i = layer.layer_num
-                weights = self.__params.get_layer_weights(i)
-                bias = self.__params.get_layer_bias(i)
-                dW = self.__backward.get_weights_grads(i)
-                db = self.__backward.get_bias_grads(i)
+                weights = self.params.get_layer_weights(i)
+                bias = self.params.get_layer_bias(i)
+                dW = self.backward.get_weights_grads(i)
+                db = self.backward.get_bias_grads(i)
                 
                 self.V['dW' + str(i)] = beta_1 * self.V['dW' + str(i)] + (1.0 - beta_1) * dW
                 self.V['db' + str(i)] = beta_1 * self.V['db' + str(i)] + (1.0 - beta_1) * db
@@ -84,7 +80,7 @@ class Adam(Optimizer):
                 bias = process_tensor(bias)
 
                 # Setting updated weights
-                self.__params.update_layer_parameters(layer.layer_num, weights, bias)
+                self.params.update_layer_parameters(layer.layer_num, weights, bias)
                 
             else:
                 continue
@@ -92,27 +88,22 @@ class Adam(Optimizer):
 
 class SGD(Optimizer):
     def __init__(self, lr=0.01):
-        super().__init__()
-        self.lr = lr
+        super().__init__(lr=lr)
 
     def init_params(self, layers, model_name):
-        self.model_name = model_name
-        self.__params = Parameters.get_model(self.model_name)
-        self.__backward = Backward.get_backward_model(self.model_name)
-        self.__layers = layers
-
+        super().init_params(layers, model_name)
 
     def step(self):
-        for layer in self.__layers:
+        for layer in self.layers:
             if isinstance(layer, Layer) and layer.has_weights:
-                weights = self.__params.get_layer_weights(layer.layer_num)
-                bias = self.__params.get_layer_bias(layer.layer_num)
+                weights = self.params.get_layer_weights(layer.layer_num)
+                bias = self.params.get_layer_bias(layer.layer_num)
         
-                weights = weights - self.lr * self.__backward.get_weights_grads(layer.layer_num)
-                bias = bias -  self.lr * self.__backward.get_bias_grads(layer.layer_num)
+                weights = weights - self.lr * self.backward.get_weights_grads(layer.layer_num)
+                bias = bias -  self.lr * self.backward.get_bias_grads(layer.layer_num)
         
                 # Setting updated weights
-                self.__params.update_layer_parameters(layer.layer_num, weights, bias)
+                self.params.update_layer_parameters(layer.layer_num, weights, bias)
 
 
     
