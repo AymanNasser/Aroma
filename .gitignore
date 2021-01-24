@@ -2,9 +2,11 @@ framework/dataset/*
 
 **/.vscode/
 __pycache__/
+*/.ipynb_checkpoints/*.ipynb
 *.pyc
 .idea/
 nn/digit-recognizer
+*.pa
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm

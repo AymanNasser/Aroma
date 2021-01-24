@@ -98,6 +98,10 @@ class DataLoader:
         
         return X_train, y_train, X_val, y_val
     
+    def __reshape_data(self, df):
+        pass
+
+
     def __partition(self, X, Y):
         assert len(X.shape) == 2 or len(X.shape) == 4, "Unsupported tensor shape for batching"
         

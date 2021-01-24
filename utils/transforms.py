@@ -1,5 +1,3 @@
-import numpy as np
-
 
 class Transform:
     def __init__(self):
@@ -9,7 +7,4 @@ class Transform:
         return data_frame.to_numpy()
 
     def normalize(self, tensor):
-        return tensor / 255.
-
-
-        
+        return (((tensor / 255.0) * 2.0) - 1.0)
