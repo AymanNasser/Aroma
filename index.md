@@ -2,6 +2,7 @@
 
 Aroma is designed based on 5 modules:
 
+### NN Module
 [**nn module**](src/nn/): Which contains the core modules of the framework such as layers, activations, losses, parameters, forward and backward modules
 
 [**activations**](src/nn/activations.py/):
@@ -38,4 +39,51 @@ Propagate backwardly through the model layers to calc. Gradients
 
 [**parameters**](src/nn/parameters.py): 
 It caches the parameters of the module’s layers with set & get methods
+
+### Optimizer Module
+[**optim module**](src/optim/): Which contains the optimizers for updating the weights ***(NOTE: currently supporting just Adam and SGD)***
+
+[**optimizers**](src/optim/optimizers/):
+It contains the implementation of two optimization algorithms **Adam and SGD**
+
+Each algorithm is a class which inherits from an abstract class called Optimizers which has functions `step()` and `zero_grad()` to implement
+
+### Evaluation Module
+[**eval module**](src/eval/): Which contains the evaluation metrics for the model
+
+[**evaluations**](src/eval/evaluations.py/):
+It contains implementation of different evaluation metrics calculations
+
+It has only one class called Evaluation which use two different average approaches **macro** and **weighted** 
+
+Implemented metrics:
+- Confusion matrix `.compute_confusion_mat()`
+- Accuracy `.compute_accuracy()`
+- F1 score: `.compute_f1_score()`
+- Recall: `.compute_recall()`
+- Precision: `.compute_precision()` 
+
+vis module: which contains the visualization module for live loss update & others
+
+[**vis module**](src/vis/visualization.py/): It contains the implementation of different visualizations
+
+It has only one class called Visualization which has methods to visualize the update of loss function during training `.plot_live_update()`, visualize the confusion matrix `.plot_confusion_matrix()` and another to visualize a sample from a dataset `.plot_sample()`
+
+
+[**utils module**](src/utils/): Which contains the data loader that process data for training, validation and testing. 
+
+
+[**dataloader**](src/utils/dataloader.py/):
+It has only one class that implements different functions of data preprocessing and downloading
+
+- Download a **kaggle dataset** and loading it into a dataframe
+- Split dataset into train., valid. and testing dataframes
+- Reshaping data to (N x M) or (H x W x C x M)
+- Partitioning data into m-batches
+
+[**transforms**](src/utils/transforms.py/):
+It has only one class called transform that implements two methods `.to_tensor()` which converts a dataframe into numpy format and another to normalize the values `.normalize()`
+
+
+
 
