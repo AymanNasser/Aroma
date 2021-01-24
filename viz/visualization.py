@@ -1,36 +1,39 @@
-import matplotlib.pyplot as plt
-import seaborn as sn
 import numpy as np
+from pylab import *
+from matplotlib.ticker import MaxNLocator
 
 class Visualization:
-    def __init__(self):
-        self.__figures = []
+    def __init__(self, loss_type):
+        self.__loss = []
+        self.__epochs = 0
+        self.__loss_type = loss_type
+        ion()
+        self.__fig = figure()
+        self.__axis = self.__fig.add_subplot(111)
 
-    def make_figure(self):
-        self.__figures.append(plt.figure())
-        self.fig, self.axes = plt.subplots(1, 2)
+    def live_update(self,loss):
+        self.__epochs += 1
+        self.__loss.append([loss])
+        y = np.array(self.__loss)
+        x = np.linspace(1, self.__epochs, num=len(self.__loss))
+        self.__axis.xaxis.set_major_locator(MaxNLocator(integer=True))
+        self.__axis.plot(x,y,'.b-')
+        self.__axis.set_xlabel("Epoch No.")
+        self.__axis.set_ylabel(self.__loss_type)
+        self.__axis.set_title("Live Loss Update")
+        draw()
+        pause(0.01)
 
-        # showing a sample image
-        self.axes[1].set_title("sample image")
-        self.axes[1].imshow(self.Image)
-        self.axes[1].set_xticks(np.arange(0, 28, 1))
-        self.axes[1].set_yticks(np.arange(0, 28, 1))
-
-        # showing training process
-        self.axes[0].set_title("training process")
-        self.axes[0].set_xlabel("iterations")
-        self.axes[0].set_ylabel("cost")
-        self.axes[0].plot(range(1, self.epochs + 1), self.cost)
-        self.axes[0].set_xticks(np.arange(1, self.epochs + 1, 1))
-        self.axes[0].set_yticks(np.arange(0, max(self.cost) + 1, (max(self.cost) - min(self.cost)) / len(self.cost)))
+    def pause_figure(self):
+        ioff()
+        show()
 
 
-    # def save_figure(self,figure_name):
-    #     self.fig.savefig(figure_name)
+vis = Visualization()
+loss = 5
+for i in range(20):
+    vis.live_update(loss)
+    loss -= 0.2
+    time.sleep(0.0001)
 
-    
-    def plot_confusion_matrix(self, conf_mat):
-        sn.set(font_scale=1.2) # for label size
-        plt.figure(figsize = (10,7))
-        sn.heatmap(conf_mat, annot=True, annot_kws={"size": 10})
-        plt.show()
+vis.pause_figure()
