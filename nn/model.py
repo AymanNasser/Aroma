@@ -90,7 +90,7 @@ class Model:
 
     def save_model(self, file_path=os.getcwd()):
         self.__params.save_weights(file_path)
-
+        
     def load_model(self, file):
         if os.path.exists(file) and file.endswith('.pa'):
             self.__params.load_weights(file)

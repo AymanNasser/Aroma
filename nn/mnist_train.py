@@ -48,7 +48,7 @@ model = Model([Linear(INPUT_FEATURE,128, init_type='xavier'),
 epoch = 0
 
 
-model.load_model(str(os.getcwd()) + '/model_111514.pa')
+# model.load_model(str(os.getcwd()) + '/model_111514.pa')
 
 cost = 0.
 for i in range(epoch):
