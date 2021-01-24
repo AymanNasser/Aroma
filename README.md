@@ -6,7 +6,7 @@ Aroma is a deep learning framework implemented in python
 pip insall pyaroma
 ```
 
-## Install Required Packages
+## Dependencies 
 ```
 pip install -r requirements.txt 
 ```
@@ -14,19 +14,19 @@ pip install -r requirements.txt
 ## Design
 Aroma is designed based on 5 modules:
 
-[**nn module**](nn/): which contains the core modules of the framework such as layers, activations, losses, parameters, forward and backward modules
+- [**nn module**](nn/): which contains the core modules of the framework such as layers, activations, losses, parameters, forward and backward modules
 
-[**optim module**](optim/): which contains the optimizers for updating the weights (NOTE: currently supporting just Adam and SGD)
+- [**optim module**](optim/): which contains the optimizers for updating the weights (NOTE: currently supporting just Adam and SGD)
 
-[**eval module**](eval/): which contains the evaluation metrices for the model
+- [**eval module**](eval/): which contains the evaluation metrices for the model
 
-[**vis module**](vis/): which contains the visualization module for live loss update & others
+- [**vis module**](vis/): which contains the visualization module for live loss update & others
 
-[**utils module**](utils/): which contains the dataloader that process data for training and validation and support auto download for mnist dataset from [kaggle](https://www.kaggle.com/c/digit-recognizer), and others helper classes and functions for the framework
+- [**utils module**](utils/): which contains the dataloader that process data for training and validation and support auto download for mnist dataset from [kaggle](https://www.kaggle.com/c/digit-recognizer), and others helper classes and functions for the framework
 
 
 ## Demo
-```
+```python
 from nn.model import Model
 from nn.activations import *
 from nn.layers import *
