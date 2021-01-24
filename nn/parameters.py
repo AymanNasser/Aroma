@@ -165,5 +165,5 @@ class Parameters:
         with open(path_to_file,'rb') as file:
             self.__parameters = pickle.load(file)
 
-    def get_weights_number(self):
+    def get_count_model_params(self):
         return self.__parameters_num

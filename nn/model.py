@@ -92,8 +92,8 @@ class Model:
     def load_model(self,path_to_model):
         self.__params.load_weights(path_to_model)
 
-    def get_weights_number(self):
-        return self.__params.get_weights_number()
+    def get_count_model_params(self):
+        return self.__params.get_count_model_params()
 
     def predict(self, X):
         return self.__forward.predict(X)
