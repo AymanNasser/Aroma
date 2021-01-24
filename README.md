@@ -8,11 +8,17 @@ pip insall pyaroma
 
 # Design
 Aroma is designed based on 5 modules:
+
 [**nn module**](nn/): which contains the core of the framework such as layers, activations, losses, parameters, forward and backwar
+
 [**optim module**](optim/): which contains the optimizers of for updating the weights (NOTE: currently support just Adam and SGD)
+
 [**eval module**](eval/): which contains the evaluation metrices for the model
+
 [**vis module**](vis/): which contains the visualizer module for live loss update
+
 [**utils module**](utils/): which containsthe dataloader that process data for training and validation and support auto download for mnist dataset from [kaggle](https://www.kaggle.com/c/digit-recognizer), and others helper classes and functions for the framework
+
 
 # Demo
 ```
