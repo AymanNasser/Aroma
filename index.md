@@ -4,7 +4,7 @@ Aroma is designed based on 5 modules:
 
 [**nn module**](src/nn/): Which contains the core modules of the framework such as layers, activations, losses, parameters, forward and backward modules
 
-[**activations**](src/nn/activations.py):
+[**activations**](src/nn/activations.py/):
 It contains the implementations of **Sigmoid, ReLU, Softmax, LeakyRelu and tanh**
 
 Each activation function in the module is a class which inherits from an abstract class called **Activation** which has two functions to implement, `forward()` and `get_grad()`
@@ -15,7 +15,7 @@ It contains the implementations of **Linear, Conv2D, MaxPool2D, AvgPool2D,Flatte
 Each layer in the module is a class which inherits from an abstract class called **Layer** which has two functions to implement the `forward()` and `backward()` behaviour of each layer.
 
 
-[**losses**](src/nn/loss.py):
+[**losses**](src/nn/losses.py):
 It contains the implementations of **MSELoss and NLLLoss (-ve log likelihood)**
 
 Each loss is a class which inherits from an abstract class called **Loss** which has two functions to implement `calc_loss()` for calculation of loss function and `get_grad()` to calculate the gradient of the loss
