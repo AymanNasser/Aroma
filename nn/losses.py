@@ -28,7 +28,7 @@ class NLLLoss(Loss):
         m = Y.shape[-1]
         y_pred = Y_pred[Y, range(m)]
         log_likelihood = -np.log(y_pred)
-        loss = np.sum(log_likelihood, axis=1).squeeze() / m
+        loss = np.mean(log_likelihood)
         return loss
 
     def calc_grad(self, Y_pred, Y):

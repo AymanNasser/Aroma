@@ -1,5 +1,5 @@
 import numpy as np
-
+from utils.process_tesnor import process_tensor
 class Range:
     start = None
     end = None
@@ -51,7 +51,7 @@ class Backward:
     def __store_in_dictionary(self,layer_num,tensor,dict_key):
         layer_name = "Layer " + str(layer_num)
         self.__create_layer(layer_name)
-        self.__cache[layer_name][dict_key] = np.copy(tensor)
+        self.__cache[layer_name][dict_key] = process_tensor(np.copy(tensor))
 
     def add_layer_values(self,layer_num,A):
         self.__store_in_dictionary(layer_num,A,'A')
@@ -83,7 +83,7 @@ class Backward:
     def __get_from_dictionary(self,layer_num,dict_key):
         layer_name = "Layer " + str(layer_num)
         self.__is_layer_exist(layer_name)
-        tensor = np.copy(self.__cache[layer_name][dict_key])
+        tensor = process_tensor(np.copy(self.__cache[layer_name][dict_key]))
         return tensor
 
     def get_layer_values(self,layer_num):
@@ -123,4 +123,5 @@ class Backward:
             dA = self.get_layer_grads(layer_num)
         dG = self.get_activation_grads(layer_num)
         dZ = np.multiply(dA,dG)
+        dZ = process_tensor(dZ)
         self.add_step_grads(layer_num,dZ)

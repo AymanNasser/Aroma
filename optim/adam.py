@@ -2,11 +2,12 @@ from optim.optimizer import Optimizer
 from nn.parameters import Parameters
 from nn.backpropagation import Backward
 from nn.layers import Layer
+from utils.process_tesnor import process_tensor
 import numpy as np
 
 
 class Adam(Optimizer):
-    def __init__(self, lr=0.01, betas=(0.9,0.999), eps=1e-2):
+    def __init__(self, lr=0.01, betas=(0.9,0.999), eps=1e-8):
         super().__init__()
         self.lr = lr
         self.betas = betas
@@ -66,8 +67,8 @@ class Adam(Optimizer):
                 weights = weights - (self.lr * V_corrected['dW' + str(i)]) / np.sqrt(S_corrected['dW' + str(i)] + self.eps)
                 bias = bias - (self.lr * V_corrected['db' + str(i)]) / np.sqrt(S_corrected['db' + str(i)] + self.eps)
 
-                weights[np.isnan(weights)] = 0.0
-                bias[np.isnan(bias)] = 0.0
+                weights = process_tensor(weights)
+                bias = process_tensor(bias)
 
                 # Setting updated weights
                 self.__params.update_layer_parameters(layer.layer_num, weights, bias)

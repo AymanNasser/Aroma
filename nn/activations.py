@@ -1,4 +1,5 @@
 import numpy as np
+from utils.process_tesnor import process_tensor
 
 class Activation:
     """
@@ -37,13 +38,13 @@ class Activation:
 class Sigmoid(Activation):
     def forward(self, X):
         out = 1.0/(1.0 + np.exp(-X))
-        out[np.isnan(out)] = 0.0
+        out = process_tensor(out)
         return out
 
     def get_grad(self, X):
         sigma_out = self.forward(X)
         sigmoid_grad = sigma_out * (1.0-sigma_out)
-        sigmoid_grad[np.isnan(sigmoid_grad)] = 0.0
+        sigmoid_grad = process_tensor(sigmoid_grad)
         return sigmoid_grad
 
 
@@ -63,14 +64,14 @@ class Softmax(Activation):
     def forward(self, X):
         exp_x = np.exp(X)
         out = exp_x/np.sum(exp_x, axis=0, keepdims=True)
-        out[np.isnan(out)] = 0.0
+        out = process_tensor(out)
         return out
 
     def get_grad(self, X):
-        exp_x = np.exp(X)
-        sum = np.sum(exp_x, axis=0, keepdims=True)
-        grad = (exp_x*sum - np.square(exp_x))/(np.square(sum))
-        grad[np.isnan(grad)] = 0.0
+        # exp_x = np.exp(X)
+        # sum = np.sum(exp_x, axis=0, keepdims=True)
+        # grad = (exp_x*sum - np.square(exp_x))/(np.square(sum))
+        # grad[np.isnan(grad)] = 0.0
         return np.ones_like(X)
 
 
@@ -92,8 +93,12 @@ class LeakyRelU(Activation):
 
 class Tanh(Activation):
     def forward(self, X):
-        return (np.exp(X) - np.exp(-X)) / ((np.exp(X) + np.exp(-X)))
+        tanh = (np.exp(X) - np.exp(-X)) / ((np.exp(X) + np.exp(-X)))
+        tanh = process_tensor(tanh)
+        return tanh
     
     def get_grad(self, X):
         tanh_out = self.forward(X)
-        return (1.0 - np.power(tanh_out, 2))
+        tanh_grad = (1.0 - np.power(tanh_out, 2))
+        tanh_grad = process_tensor(tanh_grad)
+        return tanh_grad

@@ -84,18 +84,18 @@ class Model:
 
     # For updating params
     def step(self):
-        # self.__optim.step()
-        learning_rate = 0.01
-        for layer in self.__layers:
-            if isinstance(layer, Layer) and layer.has_weights:
-                weights = self.__params.get_layer_weights(layer.layer_num)
-                bias = self.__params.get_layer_bias(layer.layer_num)
-        
-                weights -= learning_rate*self.__back.get_weights_grads(layer.layer_num)
-                bias -= learning_rate*self.__back.get_bias_grads(layer.layer_num)
-        
-                # Setting updated weights
-                self.__params.update_layer_parameters(layer.layer_num, weights, bias)
+        self.__optim.step()
+        # learning_rate = 0.1
+        # for layer in self.__layers:
+        #     if isinstance(layer, Layer) and layer.has_weights:
+        #         weights = self.__params.get_layer_weights(layer.layer_num)
+        #         bias = self.__params.get_layer_bias(layer.layer_num)
+        #
+        #         weights -= learning_rate*self.__back.get_weights_grads(layer.layer_num)
+        #         bias -= learning_rate*self.__back.get_bias_grads(layer.layer_num)
+        #
+        #         # Setting updated weights
+        #         self.__params.update_layer_parameters(layer.layer_num, weights, bias)
 
 
     def save_model(self):
