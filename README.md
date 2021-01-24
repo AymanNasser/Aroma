@@ -11,6 +11,8 @@ pip insall pyaroma
 pip install -r requirements.txt 
 ```
 
+NOTE: you need to `pip install kaggle` so you need provide kaggle.json file in your environment, check this [link](https://www.kaggle.com/docs/api)
+
 ## Design
 Aroma is designed based on 5 modules:
 
