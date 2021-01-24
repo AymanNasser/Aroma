@@ -2,7 +2,7 @@ from optim.optimizer import Optimizer
 from nn.parameters import Parameters
 from nn.backpropagation import Backward
 from nn.layers import Layer
-from utils.process_tesnor import process_tensor
+from utils.process_tensor import process_tensor
 import numpy as np
 
 
@@ -58,8 +58,8 @@ class Adam(Optimizer):
                 V_corrected['dW' + str(i)] = self.V['dW' + str(i)] / (1.0 - np.power(beta_1, self.t))
                 V_corrected['db' + str(i)] = self.V['db' + str(i)] / (1.0 - np.power(beta_1, self.t))
                 
-                self.S['dW' + str(i)] = beta_2 * self.S['dW' + str(i)] + (1.0 - beta_2) * dW
-                self.S['dW' + str(i)] = beta_2 * self.S['dW' + str(i)] + (1.0 - beta_2) * dW
+                self.S['dW' + str(i)] = beta_2 * self.S['dW' + str(i)] + (1.0 - beta_2) * np.power(dW,2)
+                self.S['db' + str(i)] = beta_2 * self.S['db' + str(i)] + (1.0 - beta_2) * np.power(db, 2)
                 
                 S_corrected['dW' + str(i)] = self.S['dW' + str(i)] / (1.0 - np.power(beta_2, self.t))
                 S_corrected['db' + str(i)] = self.S['db' + str(i)] / (1.0 - np.power(beta_2, self.t))

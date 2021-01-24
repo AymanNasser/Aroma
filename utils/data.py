@@ -5,6 +5,7 @@ from shutil import rmtree
 import pandas as pd
 from math import floor
 from utils.transforms import Transform
+import numpy as np
 
 """ This Module is responsiple for 
 1- Downloading ** a Kaggle dataset** and loading it into the model,
@@ -44,20 +45,21 @@ class DataLoader:
         train_data, test_data = self.__load_data()
         
         X_train, y_train, X_val, y_val = self.__split_data(train_data, self.split_ratio, self.shuffle)
+        
 
         X_train, y_train, X_val, y_val = self.transform.to_tensor(X_train), \
                                          self.transform.to_tensor(y_train), \
                                          self.transform.to_tensor(X_val), \
                                          self.transform.to_tensor(y_val)
-        
-        
-        self.X_train = X_train.reshape(-1, X_train.shape[0])
-        self.y_train = y_train.reshape(1, y_train.shape[0])
-        self.X_val = X_val.reshape(-1, X_val.shape[0])
-        self.y_val = y_val.reshape(1, y_val.shape[0])
+
+        self.X_train = X_train.reshape(X_train.shape[0], -1).T
+        self.y_train = y_train.reshape(y_train.shape[0], -1).T
+        self.X_val = X_val.reshape(X_val.shape[0], -1).T
+        self.y_val = y_val.reshape(y_val.shape[0], -1).T
+
 
         self.X_test = self.transform.to_tensor(test_data)
-        self.X_test = self.X_test.reshape(-1, self.X_test.shape[0])
+        self.X_test = self.X_test.reshape(self.X_test.shape[0], -1).T
 
     def __download_dataset(self, dataset_name):
         """takes a dataset name and download it from **kaggle**, unzip it and remove the zip file"""
@@ -109,6 +111,10 @@ class DataLoader:
         
         return X_train, y_train, X_val, y_val
     
+    def __reshape_data(self, df):
+        pass
+
+
     def __partition(self, X, Y):
         assert len(X.shape) == 2 or len(X.shape) == 4, "Unsupported tensor shape for batching"
         

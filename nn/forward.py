@@ -1,7 +1,7 @@
 from nn.layers import Layer
 from nn.activations import Activation
 from nn.backpropagation import Backward
-from utils.process_tesnor import process_tensor
+from utils.process_tensor import process_tensor
 
 class Forward:
     """

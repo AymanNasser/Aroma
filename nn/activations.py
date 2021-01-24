@@ -1,5 +1,5 @@
 import numpy as np
-from utils.process_tesnor import process_tensor
+from utils.process_tensor import process_tensor
 
 class Activation:
     """
