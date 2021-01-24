@@ -1,6 +1,6 @@
 import numpy as np
 from nn.parameters import Parameters
-
+from utils.process_tensor import padding
 
 class Layer:
     """
@@ -115,23 +115,43 @@ class Conv2D(Layer):
     """
     Convoloution layer
     """
-    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=0,init_type='random'):
+    def __init__(self, in_channels, out_channels, kernel_size=(3, 3), stride=(1, 1), padding=(0, 0),init_type='random'):
         super().__init__()
+        if isinstance(kernel_size,tuple):
+            self.kernel_size = kernel_size
+        elif isinstance(kernel_size,int):
+            self.kernel_size = (kernel_size,kernel_size)
+        else:
+            raise AttributeError("Pleas specify tuple or int kernel size")
+
+        if isinstance(stride,tuple):
+            self.stride = stride
+        elif isinstance(stride,int):
+            self.stride = (stride,stride)
+        else:
+            raise AttributeError("Pleas specify tuple or int stride")
+
+        if isinstance(padding,tuple):
+            self.padding = padding
+        elif isinstance(padding,int):
+            self.padding = (padding,padding)
+        else:
+            raise AttributeError("Pleas specify tuple or int padding")
+
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.stride = stride
-        self.kernel_size = kernel_size
-        self.padding = padding
         self.init_type = init_type
         self.has_weights = True
+        Parameters("model")
+        self.params = Parameters.get_model("model")
 
     def init_weights(self):
         if self.init_type == 'random':
-            self.params.initiate_random_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+            self.params.initiate_random_conv2(self.kernel_size[0],self.kernel_size[1],self.in_channels,self.out_channels,self.layer_num)
         elif self.init_type == 'zero':
-            self.params.initiate_zeros_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+            self.params.initiate_zeros_conv2(self.kernel_size[0],self.kernel_size[1],self.in_channels,self.out_channels,self.layer_num)
         elif self.init_type == 'xavier':
-            self.params.initiate_xavier_conv2(self.kernel_size,self.kernel_size,self.in_channels,self.out_channels,self.layer_num)
+            self.params.initiate_xavier_conv2(self.kernel_size[0],self.kernel_size[1],self.in_channels,self.out_channels,self.layer_num)
         else:
             raise AttributeError("Non Supported Type of Initialization")
     
@@ -175,32 +195,29 @@ class Conv2D(Layer):
         (n_H_prev, n_W_prev, n_C_prev, m) = A_prev.shape
 
         # calculating output dimensions
-        n_H = int((n_H_prev + 2 * self.padding - self.kernel_size) / self.stride) + 1
-        n_W = int((n_W_prev + 2 * self.padding - self.kernel_size) / self.stride) + 1
+        n_H = int((n_H_prev + 2 * self.padding[0] - self.kernel_size[0]) / self.stride[0]) + 1
+        n_W = int((n_W_prev + 2 * self.padding[1] - self.kernel_size[1]) / self.stride[1]) + 1
 
         # Initialize the output volume Z with zeros. (≈1 line)
-        Z = np.zeros([n_H, n_W, self.out_channels, m])
+        Z = np.zeros((n_H, n_W, self.out_channels, m))
         # Create A_prev_pad by padding A_prev
-        #A_prev_pad = zero_pad(A_prev, pad)
+        A_prev_pad = padding(A_prev, self.padding)
 
         for i in range(m):  # loop over the batch of training examples
-            a_prev = A_prev[:, :, :, i]  # Select ith training example's padded activation
-            for h in range (n_H):  # loop over vertical axis of the output volume
+            a_prev = A_prev_pad[:, :, :, i]  # Select ith training example's padded activation
+            for h in range(n_H):  # loop over vertical axis of the output volume
+                vert_start = h * self.stride[0]
+                vert_end = h * self.stride[0] + self.kernel_size[0]
                 for w in range(n_W):  # loop over horizontal axis of the output volume
+                    horiz_start = w * self.stride[1]
+                    horiz_end = w * self.stride[1] + self.kernel_size[1]
                     for c in range(self.out_channels):  # loop over channels (= #filters) of the output volume
 
-                        # Find the corners of the current "slice" (≈4 lines)
-                        vert_start = h * self.stride
-                        vert_end = h * self.stride + self.kernel_size
-                        horiz_start = w * self.stride
-                        horiz_end = w * self.stride + self.kernel_size
-
                         # Use the corners to define the (3D) slice of a_prev_pad (See Hint above the cell). (≈1 line)
-                        a_slice_prev = a_prev[vert_start:vert_end,horiz_start:horiz_end,:]
+                        a_slice_prev = a_prev[vert_start:vert_end, horiz_start:horiz_end, :]
 
                         # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron. (≈1 line)
                         Z[h, w, c, i] = self.conv_single_step(a_slice_prev, W[:, :, :, c], b[:, :, :, c])
-
 
         # Making sure your output shape is correct
         assert (Z.shape == (n_H, n_W, self.out_channels, m))
@@ -223,32 +240,24 @@ class Conv2D(Layer):
                   numpy array of shape (1, 1, 1, n_C)
             """
 
-        ### START CODE HERE ###
-        # Retrieve information from "cache"
-        #(A_prev, W, b, hparameters) = cache
-
-        # Retrieve dimensions from A_prev's shape
         (n_H_prev, n_W_prev, n_C_prev, m) = A_prev.shape
 
         # Retrieve dimensions from W's shape
         W = self.params.get_layer_weights(self.layer_num)
-        (f, f, n_C_prev, n_C) = W.shape
+        (f1, f2, n_C_prev, n_C) = W.shape
 
-        # Retrieve information from "hparameters"
-        #stride = hparameters["stride"]
-        #pad = hparameters["pad"]
 
         # Retrieve dimensions from dZ's shape
         (n_H, n_W, n_C, m) = dZ.shape
 
         # Initialize dA_prev, dW, db with the correct shapes
         dA_prev = np.zeros((n_H_prev, n_W_prev, n_C_prev,m))
-        dW = np.zeros((f, f, n_C_prev, n_C))
+        dW = np.zeros((f1, f2, n_C_prev, n_C))
         db = np.zeros((1, 1, 1, n_C))
 
         # Pad A_prev and dA_prev
-        A_prev_pad = A_prev   #zero_pad(A_prev, pad)
-        dA_prev_pad = dA_prev #zero_pad(dA_prev, pad)
+        A_prev_pad = padding(A_prev, self.padding)
+        dA_prev_pad = padding(dA_prev, self.padding)
 
         for i in range(m):  # loop over the training examples
 
@@ -257,16 +266,12 @@ class Conv2D(Layer):
             da_prev_pad = dA_prev_pad[:, :, :, i]
 
             for h in range(n_H):  # loop over vertical axis of the output volume
+                vert_start = h * self.stride[0]
+                vert_end = vert_start + f1
                 for w in range(n_W):  # loop over horizontal axis of the output volume
+                    horiz_start = w * self.stride[1]
+                    horiz_end = horiz_start + f2
                     for c in range(n_C):  # loop over the channels of the output volume
-
-                        # Find the corners of the current "slice"
-                        vert_start = h * self.stride
-
-                        vert_end = vert_start + f
-                        horiz_start = w * self.stride
-
-                        horiz_end = horiz_start + f
 
                         # Use the corners to define the slice from a_prev_pad
                         a_slice = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]
@@ -277,17 +282,19 @@ class Conv2D(Layer):
                         db[:, :, :, c] += dZ[h, w, c, i]
 
             # Set the ith training example's dA_prev to the unpaded da_prev_pad (Hint: use X[pad:-pad, pad:-pad, :])
-            dA_prev[:, :, :, i] = da_prev_pad[:, :, :]
-        ### END CODE HERE ###
+            if self.padding == (0, 0):
+                dA_prev[:, :, :, i] = da_prev_pad
+            elif self.padding[0] == 0:
+                dA_prev[:, :, :, i] = da_prev_pad[:, self.padding[1]:-self.padding[1], :]
+            elif self.padding[1] == 0:
+                dA_prev[:, :, :, i] = da_prev_pad[self.padding[0]:-self.padding[0], :, :]
+            else:
+                dA_prev[:, :, :, i] = da_prev_pad[self.padding[0]:-self.padding[0], self.padding[1]:-self.padding[1], :]
 
         # Making sure your output shape is correct
         assert (dA_prev.shape == (n_H_prev, n_W_prev, n_C_prev, m))
 
         return dA_prev, dW, db
-
-    def padding(self, X):
-        pad_list = [(self.__padding[0],), (self.__padding[1],), (0,), (0,)]
-        return np.pad(X, pad_list, 'constant')
 
 
 class MaxPool2D(Layer):
@@ -319,12 +326,8 @@ class MaxPool2D(Layer):
 
         self.has_weights = False
 
-    def padding(self,X):
-        pad_list = [(self.__padding[0],),(self.__padding[1],),(0,),(0,)]
-        return np.pad(X,pad_list,'constant')
-
     def forward(self, A_prev):
-        A_prev_pad = self.padding(A_prev)
+        A_prev_pad = padding(A_prev, self.__padding)
         KH, KW = self.__kernel_size
         SH, SW = self.__stride
         PH, PW = self.__padding
@@ -536,14 +539,13 @@ class BatchNorm2D(Layer):
         return dX
         
 
-
     def calc_grad(self):
         pass
 
-# # pool =
-# layer1 = Conv2D(1,4,3,1,0,'random')
+
+# layer1 = Conv2D(1,4,3,1,2,'random')
 # layer1.init_weights()
 # input = np.random.rand(28,28,1,100)
 # debug = layer1.forward(input)
-# #print(debug)
 # print(debug.shape)
+# print(layer1.backward(debug, input))

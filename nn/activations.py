@@ -68,10 +68,6 @@ class Softmax(Activation):
         return out
 
     def get_grad(self, X):
-        # exp_x = np.exp(X)
-        # sum = np.sum(exp_x, axis=0, keepdims=True)
-        # grad = (exp_x*sum - np.square(exp_x))/(np.square(sum))
-        # grad[np.isnan(grad)] = 0.0
         return np.ones_like(X)
 
 
@@ -86,8 +82,8 @@ class LeakyRelU(Activation):
 
     def get_grad(self, X):
         grad = np.copy(X)
-        grad[X>=0] = 1.0
-        grad[X<0] = self.neg_slope
+        grad[X >= 0] = 1.0
+        grad[X < 0] = self.neg_slope
         return grad
 
 
