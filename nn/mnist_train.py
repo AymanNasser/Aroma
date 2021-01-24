@@ -8,6 +8,7 @@ from nn.losses import *
 from optim.optimizers import Adam, SGD
 from utils.dataloader import DataLoader
 from eval.evaluation import Evaluation
+from viz.visualization import Visualization
 from utils.transforms import Transform
 from tqdm import tqdm
 from matplotlib import pyplot as plt
@@ -73,5 +74,7 @@ acc = eval.compute_accuracy()
 prec = eval.compute_precision()
 recall = eval.compute_recall()
 f1_score = eval.compute_f1_score()
+conf_mat = eval.compute_confusion_mat()
 print("Accuracy: ",acc,"Precision: ",prec,"Recall: ",recall,"F1_Score: ",f1_score)   
-
+vis = Visualization()
+vis.plot_confusion_matrix(conf_mat)

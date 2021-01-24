@@ -1,5 +1,6 @@
 import numpy as np
 from pylab import *
+import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
 
@@ -35,8 +36,8 @@ class Visualization:
         show()
  
     def plot_confusion_matrix(self, conf_mat):
-        sn.set(font_scale=1.2) # for label size
+        sns.set(font_scale=1.2) # for label size
         plt.figure(figsize = (10,7))
-        sn.heatmap(conf_mat, annot=True, annot_kws={"size": 10})
+        sns.heatmap(conf_mat, annot=True, annot_kws={"size": 10})
         plt.show()
 
