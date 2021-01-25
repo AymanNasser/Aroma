@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 INPUT_FEATURE = 784
 
-data_loader = DataLoader(batch_size=64, dataset_path="../")
+data_loader = DataLoader(batch_size=64, download=False)
 
 # Training
 X_train, y_train = data_loader.get_train_data()

@@ -63,8 +63,6 @@ Implemented metrics:
 - Recall: `.compute_recall()`
 - Precision: `.compute_precision()` 
 
-vis module: which contains the visualization module for live loss update & others
-
 [**vis module**](src/vis/visualization.py/): It contains the implementation of different visualizations
 
 It has only one class called Visualization which has methods to visualize the update of loss function during training `.plot_live_update()`, visualize the confusion matrix `.plot_confusion_matrix()` and another to visualize a sample from a dataset `.plot_sample()`
